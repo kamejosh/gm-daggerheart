@@ -8,7 +8,7 @@ import { useShallow } from "zustand/react/shallow";
 import { toNumber } from "lodash";
 import { EvasionSvg } from "../../svgs/EvasionSvg.tsx";
 
-export const Evasion = ({ id }: { id: string }) => {
+export const Evasion = ({ id, hasOwnership }: { id: string; hasOwnership: boolean }) => {
     const evasionRef = useRef<HTMLInputElement>(null);
     const token = useTokenListContext(useShallow((state) => state.tokens?.get(id)));
     const data = token?.data as GMDMetadata;
@@ -23,35 +23,41 @@ export const Evasion = ({ id }: { id: string }) => {
         <div className={"token-evasion"}>
             <EvasionSvg />
             <div className={"current-hp"}>
-                <Tippy content={"Set current Evasion"}>
-                    <input
-                        ref={evasionRef}
-                        type={"text"}
-                        defaultValue={data.evasion}
-                        onBlur={async (e) => {
-                            const input = toNumber(e.target.value);
-                            const evasion = Math.max(Math.min(input, 6), 0);
-                            e.target.value = String(evasion);
-                            await updateTokenMetadata({ ...data, evasion: evasion }, [id]);
-                        }}
-                        onKeyDown={async (e) => {
-                            if (e.key === "ArrowUp") {
-                                const evasion = Math.min(data.evasion + 1, 6);
-                                e.currentTarget.value = String(evasion);
-                                await updateTokenMetadata({ ...data, evasion: evasion }, [id]);
-                            } else if (e.key === "ArrowDown") {
-                                const evasion = Math.min(data.evasion - 1, 0);
-                                e.currentTarget.value = String(evasion);
-                                await updateTokenMetadata({ ...data, evasion: evasion }, [id]);
-                            } else if (e.key === "Enter") {
-                                const input = toNumber(e.currentTarget.value);
-                                const evasion = Math.max(Math.min(input, 6), 0);
-                                e.currentTarget.value = String(evasion);
-                                await updateTokenMetadata({ ...data, evasion: evasion }, [id]);
-                            }
-                        }}
-                    />
-                </Tippy>
+                {hasOwnership ? (
+                    <>
+                        <Tippy content={"Set current Evasion"}>
+                            <input
+                                ref={evasionRef}
+                                type={"text"}
+                                defaultValue={data.evasion}
+                                onBlur={async (e) => {
+                                    const input = toNumber(e.target.value);
+                                    const evasion = Math.max(Math.min(input, 6), 0);
+                                    e.target.value = String(evasion);
+                                    await updateTokenMetadata({ ...data, evasion: evasion }, [id]);
+                                }}
+                                onKeyDown={async (e) => {
+                                    if (e.key === "ArrowUp") {
+                                        const evasion = Math.min(data.evasion + 1, 6);
+                                        e.currentTarget.value = String(evasion);
+                                        await updateTokenMetadata({ ...data, evasion: evasion }, [id]);
+                                    } else if (e.key === "ArrowDown") {
+                                        const evasion = Math.min(data.evasion - 1, 0);
+                                        e.currentTarget.value = String(evasion);
+                                        await updateTokenMetadata({ ...data, evasion: evasion }, [id]);
+                                    } else if (e.key === "Enter") {
+                                        const input = toNumber(e.currentTarget.value);
+                                        const evasion = Math.max(Math.min(input, 6), 0);
+                                        e.currentTarget.value = String(evasion);
+                                        await updateTokenMetadata({ ...data, evasion: evasion }, [id]);
+                                    }
+                                }}
+                            />
+                        </Tippy>
+                    </>
+                ) : (
+                    <>{data.evasion}</>
+                )}
             </div>
         </div>
     );

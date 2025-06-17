@@ -33,6 +33,7 @@ export const Token = (props: TokenProps) => {
     const token = useTokenListContext(useShallow((state) => state.tokens?.get(props.id)));
     const data = token?.data as GMDMetadata;
     const item = token?.item as Image;
+    const hasOwnership = playerContext.role === "GM" || item.createdUserId === playerContext.id;
     const start = useRef<number>(0);
 
     const getGroupSelectRange = (currentSelection: Array<string>): Array<string> | null => {
@@ -173,22 +174,27 @@ export const Token = (props: TokenProps) => {
                 isDragging={props.isDragging}
             />
             <div className={"section"}>
-                <HP id={props.id} />
-                <Stress id={props.id} />
-                <Armor id={props.id} />
+                <HP id={props.id} hasOwnership={hasOwnership} />
+                <Stress id={props.id} hasOwnership={hasOwnership} />
+                <Armor id={props.id} hasOwnership={hasOwnership} />
             </div>
             <div className={"section"}>
-                <Evasion id={props.id} />
-                <Hope id={props.id} />
-                <Spotlight id={props.id} />
+                <Evasion id={props.id} hasOwnership={hasOwnership} />
+                <Hope id={props.id} hasOwnership={hasOwnership} />
+                <Spotlight id={props.id} hasOwnership={hasOwnership} />
             </div>
-            <div className={"section"}>
-                <Stats data={data} item={item} />
-                <Damage id={props.id} />
-            </div>
-            <div className={"section"}>
-                <Owner id={props.id} />
-            </div>
+            {hasOwnership ? (
+                <>
+                    <div className={"section"}>
+                        <Stats data={data} item={item} />
+                        <Damage id={props.id} />
+                    </div>
+                    <div className={"section"}>
+                        <Owner id={props.id} />
+                    </div>
+                </>
+            ) : null}
+            {hasOwnership && playerContext.role === "Player" ? <></> : null}
         </div>
     ) : data.showOnMap && item.visible ? (
         <div ref={containerRef} className={`token`}>

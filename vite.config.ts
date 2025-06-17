@@ -14,7 +14,6 @@ export default defineConfig({
                 popover: resolve(__dirname, "popover.html"),
                 background: resolve(__dirname, "background.html"),
                 modal: resolve(__dirname, "modal.html"),
-                statblock: resolve(__dirname, "statblock.html"),
                 rolllog: resolve(__dirname, "rolllog.html"),
             },
             /**

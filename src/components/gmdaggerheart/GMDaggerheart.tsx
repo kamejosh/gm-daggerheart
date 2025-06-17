@@ -73,7 +73,6 @@ const Content = () => {
 
     const items = useMemo(() => (tokens ? [...tokens].map((t) => t[1].item) : []), [tokens]);
     const playerTokens = tokens ? [...tokens].filter((t) => t[1].data.isPlayer).map((t) => t[1].item) : [];
-    console.log(playerTokens);
 
     const tokenLists = useMemo(() => {
         const tokenMap = new Map<string, Array<Image>>();

@@ -17,8 +17,6 @@ export type DiceButtonsType = {
     4: CustomDieNotation | null;
     5: CustomDieNotation | null;
     6: CustomDieNotation | null;
-    7: CustomDieNotation | null;
-    8: CustomDieNotation | null;
 };
 
 export type DiceButtonsContextType = {
@@ -27,7 +25,7 @@ export type DiceButtonsContextType = {
 };
 
 const diceButtonsSlice: StateCreator<DiceButtonsContextType, [["zustand/persist", unknown]]> = (set) => ({
-    buttons: { 1: null, 2: null, 3: null, 4: null, 5: null, 6: null, 7: null, 8: null },
+    buttons: { 1: null, 2: null, 3: null, 4: null, 5: null, 6: null },
     setButtons: (button) =>
         set((state) => {
             return { buttons: { ...state.buttons, ...button } };

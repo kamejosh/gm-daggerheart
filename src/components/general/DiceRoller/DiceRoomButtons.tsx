@@ -4,7 +4,7 @@ import { ReactNode, useCallback, useEffect, useRef, useState } from "react";
 import { IAvailableDie, IDiceRoll, IDieType, ITheme, Operator, parseRollEquation } from "dddice-js";
 import { DiceSvg } from "../../svgs/DiceSvg.tsx";
 import { AddSvg } from "../../svgs/AddSvg.tsx";
-import { diceToRoll, getUserUuid, localRoll, rollWrapper } from "../../../helper/diceHelper.ts";
+import { diceToRoll, getUserUuid, localRoll, rollerCallback, rollWrapper } from "../../../helper/diceHelper.ts";
 import { RollLogSvg } from "../../svgs/RollLogSvg.tsx";
 import { useMetadataContext } from "../../../context/MetadataContext.ts";
 import { useRollLogContext } from "../../../context/RollLogContext.tsx";
@@ -462,6 +462,157 @@ const QuickButtons = ({ open }: { open: boolean }) => {
     );
 };
 
+const DualityDiceButton = () => {
+    const [rollerApi, theme, hopeTheme, fearTheme, initialized, themes] = useDiceRoller(
+        useShallow((state) => [
+            state.rollerApi,
+            state.theme,
+            state.hopeTheme,
+            state.fearTheme,
+            state.initialized,
+            state.themes,
+        ]),
+    );
+    const addRoll = useRollLogContext(useShallow((state) => state.addRoll));
+    const [room] = useMetadataContext(useShallow((state) => [state.room]));
+    const [hover, setHover] = useState<boolean>(false);
+
+    const roll = async (modifier?: "ADV" | "DIS" | "SELF") => {
+        let parsedDice: Array<{
+            dice: IDiceRoll[];
+            operator: Operator | undefined;
+        }> = [];
+
+        if (!room?.disableDiceRoller) {
+            parsedDice.push(parseRollEquation("1d12", hopeTheme ? hopeTheme.id : theme?.id || "dddice-bees"));
+            parsedDice.push(parseRollEquation("1d12", fearTheme ? fearTheme.id : theme?.id || "dddice-bees"));
+
+            const parsed: {
+                dice: IDiceRoll[];
+                operator: Operator | undefined;
+            } = { dice: [], operator: undefined };
+            parsedDice.forEach((p) => {
+                parsed.dice.push(...p.dice);
+            });
+
+            if (modifier !== "ADV" && modifier !== "DIS") {
+                parsed.operator = { k: "h1" };
+            } else if (modifier === "ADV") {
+                parsed.dice.push({ type: "d6", theme: theme?.id || "dddice-bees" });
+                parsed.operator = { k: { h1: [0, 1] }, "*": { "+1": [2] } };
+            } else if (modifier === "DIS") {
+                parsed.dice.push({ type: "d6", theme: theme?.id || "dddice-bees" });
+                parsed.operator = { k: { h1: [0, 1] }, "*": { "-1": [2] } };
+            }
+
+            if (rollerApi) {
+                try {
+                    let rollResult = await rollWrapper(rollerApi, parsed.dice, {
+                        label: "Roll Duality",
+                        operator: parsed.operator,
+                        whisper: modifier === "SELF" ? await getUserUuid(room, rollerApi) : undefined,
+                    });
+                    if (rollResult) {
+                        if (rollResult.values[0].value > rollResult.values[1].value) {
+                            rollResult.label += ": Hope";
+                        } else if (rollResult.values[0].value < rollResult.values[1].value) {
+                            rollResult.label += ": Fear";
+                        } else {
+                            rollResult.label += ": Critical";
+                        }
+                        await rollerCallback(rollResult, addRoll);
+                    }
+                } catch {
+                    console.warn("error in dice roll", parsed.dice, parsed.operator);
+                }
+            }
+        } else {
+            let notation = "2d12kh1";
+            if (modifier === "ADV") {
+                notation += "+1d6";
+            } else if (modifier === "DIS") {
+                notation += "-1d6";
+            }
+
+            await localRoll(notation, "Roll Custom", addRoll, modifier === "SELF", undefined, true);
+        }
+    };
+
+    const getDicePreview = useCallback(() => {
+        if (theme && !room?.disableDiceRoller) {
+            const hopeFallBackTheme = hopeTheme ?? theme;
+            const fearFallBackTheme = fearTheme ?? theme;
+            try {
+                return (
+                    <div className={"custom-dice-preview-wrapper"}>
+                        {["d12", "d12"].map((die, index) => {
+                            const currentTheme = index === 0 ? hopeFallBackTheme : fearFallBackTheme;
+                            const preview = getDiceImage(theme, die, index, currentTheme.id, themes);
+                            if (preview) {
+                                return preview;
+                            }
+                            if (currentTheme.preview.hasOwnProperty("d12")) {
+                                return (
+                                    <img key={index} className={"preview-image"} src={theme.preview[die]} alt={die} />
+                                );
+                            } else if (!theme.preview.hasOwnProperty(die)) {
+                                return (
+                                    <div key={index} className={"preview-image"}>
+                                        {getSvgForDiceType(die)}
+                                    </div>
+                                );
+                            }
+                        })}
+                    </div>
+                );
+            } catch {
+                return <DiceSvg />;
+            }
+        } else {
+            return (
+                <div className={"custom-dice-preview-wrapper"}>
+                    <div className={"preview-image"}>{getSvgForDiceType("d12")}</div>
+                    <div className={"preview-image"}>{getSvgForDiceType("d12")}</div>
+                </div>
+            );
+        }
+    }, [theme, hopeTheme, fearTheme, room?.disableDiceRoller, themes, rollerApi]);
+
+    const isEnabled = useCallback(() => {
+        return (initialized && !room?.disableDiceRoller) || room?.disableDiceRoller;
+    }, [initialized, room?.disableDiceRoller]);
+
+    return (
+        <div
+            className={`custom-dice-wrapper has-dice duality-dice`}
+            onMouseEnter={() => setHover(true)}
+            onMouseLeave={() => setHover(false)}
+        >
+            <Tippy content={"Roll Duality Dice"}>
+                <button
+                    className={`button custom-dice ${isEnabled() ? "enabled" : "disabled"}`}
+                    onClick={async () => {
+                        await roll();
+                    }}
+                >
+                    {getDicePreview()}
+                </button>
+            </Tippy>
+
+            <button
+                className={`hidden-roll self ${hover ? "hover" : ""}`}
+                onClick={async (e) => {
+                    if (e.currentTarget.parentElement) {
+                        await roll("SELF");
+                    }
+                }}
+            >
+                HIDE
+            </button>
+        </div>
+    );
+};
+
 export const DiceRoomButtons = (props: DiceRoomButtonsProps) => {
     const { buttons, setButtons } = useDiceButtonsContext();
     const [quick, setQuick] = useState<boolean>(false);
@@ -482,6 +633,7 @@ export const DiceRoomButtons = (props: DiceRoomButtonsProps) => {
             {Object.values(buttons).map((value, index) => {
                 return <CustomDiceButton key={index} button={index + 1} customDice={value} />;
             })}
+            <DualityDiceButton />
             <Tippy content={"Log & Settings"}>
                 <button
                     className={`open-dice-tray button icon ${props.open ? "open" : "closed"}`}

@@ -76,6 +76,7 @@ export const createBar = async (percentage: number, tempHpPercentage: number, to
     return [backgroundShape, hpShape, tempHp];
 };
 
+// @ts-ignore
 const createText = async (text: string, token: Image) => {
     const bounds = await getImageBounds(token);
     const height = Math.abs(Math.ceil(bounds.height / 4.85));
@@ -114,15 +115,19 @@ const createText = async (text: string, token: Image) => {
 };
 
 export const saveOrChangeAttachments = async (
+    // @ts-ignore
     token: Item,
+    // @ts-ignore
     data: GMDMetadata,
+    // @ts-ignore
     attachments: Array<Item>,
+    // @ts-ignore
     changes: Map<string, ItemChanges>,
 ) => {};
 
+// @ts-ignore
 export const updateAttachments = async (item: Item, data: GMDMetadata) => {
     // TODO: implement
-    console.log("updateAttachment");
 };
 
 export const updateAttachmentChanges = async (changes: Map<string, ItemChanges>) => {
