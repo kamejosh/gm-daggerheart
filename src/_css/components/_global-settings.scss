@@ -1,0 +1,117 @@
+.global-setting {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-bottom: 10px;
+
+    & > * {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        padding-block: 10px;
+        border-bottom: 1px solid white;
+        transition: background-color 0.25s ease;
+        align-items: center;
+
+        &:has(input) {
+            &:hover,
+            &:focus-visible {
+                background-color: #ffffff33;
+            }
+        }
+    }
+
+    h2,
+    h4 {
+        margin-block: 0;
+    }
+
+    input[type="checkbox"] {
+        height: 20px;
+        width: 20px;
+    }
+
+    input[type="number"] {
+        width: 6ch;
+    }
+
+    .vertical {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .setting-group {
+        gap: 1ch;
+        align-items: unset;
+
+        &:hover,
+        &:focus-visible {
+            background: transparent;
+        }
+
+        & > * {
+            display: flex;
+            gap: 1ch;
+            justify-content: space-between;
+            align-items: center;
+            transition: background-color 0.25s ease;
+
+            &:has(input) {
+                &:hover,
+                &:focus-visible {
+                    background-color: #ffffff33;
+                }
+            }
+        }
+
+        .new-group-wrapper {
+            &:hover,
+            &:focus-visible {
+                background-color: transparent;
+            }
+        }
+    }
+
+    .settings-context {
+        align-items: flex-start;
+        gap: 0;
+
+        h3 {
+            margin-block: 0;
+        }
+    }
+
+    .group-list {
+        gap: 4px;
+
+        .group {
+            display: flex;
+            justify-content: space-between;
+            border: 1px solid lightgray;
+            border-radius: 5px;
+            padding: 2px 5px;
+            margin-block: 2px;
+
+            &:hover,
+            &:active,
+            &:focus {
+                background-color: dimgrey;
+            }
+
+            button {
+                cursor: pointer;
+                border: none;
+                background-color: transparent;
+                color: white;
+
+                &:hover {
+                    color: red;
+                }
+            }
+        }
+    }
+
+    .small {
+        font-size: 0.7em;
+    }
+}

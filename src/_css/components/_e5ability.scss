@@ -1,0 +1,21 @@
+.e5-ability {
+    display: flex;
+    flex-direction: column;
+
+    .ability-name {
+        font-size: 1.2rem;
+    }
+
+    .ability-extra-info {
+        display: flex;
+        //justify-content: space-between;
+        gap: 1ch;
+        margin-top: 4px;
+        padding-left: 1ch;
+
+        .extra-info-with-button {
+            display: flex;
+            gap: 1ch;
+        }
+    }
+}

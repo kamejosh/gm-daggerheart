@@ -1,0 +1,116 @@
+body:has(.popover-app) {
+    overflow: hidden;
+}
+
+#app {
+    .multi-selection {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        justify-content: space-between;
+        height: 100px;
+        overflow: hidden;
+
+        .token-names {
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: flex-start;
+            gap: 1px;
+            margin: 0;
+            padding-left: 0;
+            height: 100%;
+            overflow-y: scroll;
+            line-height: 1;
+            list-style: none;
+
+            .token-entry {
+                padding-block: 1px;
+                padding-left: 5px;
+                width: calc(100% - 5px);
+                text-align: left;
+            }
+
+            &::-webkit-scrollbar {
+                background-color: var(--bg-color);
+                width: 12px;
+            }
+
+            &::-webkit-scrollbar-thumb {
+                -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+                border-radius: 10px;
+                background-color: #555;
+            }
+        }
+
+        .changes {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 1ch;
+            padding-inline: 10px;
+            height: 100%;
+
+            .hp {
+                display: grid;
+                grid-template-areas:
+                    "input heal"
+                    "input damage";
+                justify-content: space-between;
+                align-items: center;
+                gap: 2px;
+
+                .input {
+                    grid-area: input;
+                    max-width: 30px;
+                }
+
+                .heal {
+                    grid-area: heal;
+                    background-color: rgba(0, 255, 0, 0.2);
+                }
+
+                .damage {
+                    grid-area: damage;
+                    background-color: rgba(255, 0, 0, 0.2);
+                }
+            }
+
+            .settings {
+                display: flex;
+                justify-content: space-between;
+
+                .setting {
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    gap: 2px;
+                    .hp-icon,
+                    .ac-icon,
+                    .initiative-icon {
+                        fill: #888888;
+                        height: 15px;
+                    }
+                }
+            }
+        }
+    }
+
+    &.popover-app {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100px;
+
+        .popover-spinner {
+            margin: auto;
+            padding: 15px;
+            width: 60px;
+            height: 100%;
+        }
+
+        .popover {
+            height: 100%;
+            overflow: hidden;
+        }
+    }
+}

@@ -1,0 +1,172 @@
+.statblock-app {
+    &:not(:has(.minimized)) {
+        margin-bottom: 40px;
+        height: calc(100vh - 40px - 2rem);
+    }
+
+    .statblock-popover {
+        height: 100%;
+        position: relative;
+
+        &.minimized {
+            &::before {
+                height: calc(26px + 1rem);
+            }
+        }
+
+        &::before {
+            display: block;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 100;
+            background-color: var(--bg-color);
+            width: 100%;
+            height: calc(30px + 1rem);
+            content: "";
+        }
+
+        .help-buttons {
+            position: fixed;
+            top: 1rem;
+            z-index: 200;
+            margin-top: 0;
+        }
+
+        .statblock-list {
+            position: sticky;
+            top: calc(30px + 1rem);
+            z-index: 3;
+            margin-top: calc(10px + 1rem);
+            margin-bottom: 2px;
+            background-color: var(--bg-color);
+            overflow: hidden;
+            list-style: none;
+
+            &.minimized {
+                padding: 0;
+            }
+
+            .swiper-slide {
+                border-bottom: 1px solid grey;
+            }
+
+            .pre,
+            .post {
+                display: block;
+                align-self: flex-end;
+                width: 10px;
+                height: 10px;
+            }
+
+            .statblock-name {
+                display: flex;
+                justify-content: space-between;
+                gap: 0.5ch;
+                transition: all 0.25s ease-in-out;
+                cursor: pointer;
+                border-top-right-radius: 5px;
+                border-top-left-radius: 5px;
+                padding-inline: 1ch;
+                padding-top: 3px;
+                width: 100px;
+                overflow: hidden;
+                color: gray;
+                font-weight: 600;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+
+                &:first-child {
+                    border-right: none;
+                }
+
+                &:last-child {
+                    border-left: none;
+                }
+
+                &:hover,
+                &:focus-visible {
+                    background-color: dimgrey;
+                }
+
+                &.active {
+                    border: 1px solid grey;
+                    border-bottom: none;
+                    color: white;
+
+                    &:hover,
+                    &:focus-visible {
+                        background: linear-gradient(to bottom, dimgray 90%, var(--bg-color));
+                    }
+                }
+
+                &.collapsed {
+                    transition: all 0.25s ease;
+                    border-top: 1px solid white;
+                    border-right: 1px solid white;
+                    border-bottom: none;
+                    border-left: 1px solid white;
+                    width: 0;
+                    height: 23px;
+
+                    &:hover,
+                    &:focus-visible {
+                        width: 100px;
+
+                        .name,
+                        .hp {
+                            display: initial;
+                        }
+                    }
+
+                    .name,
+                    .hp {
+                        display: none;
+                    }
+                }
+
+                .name {
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    white-space: nowrap;
+                }
+
+                .hp {
+                    font-size: 0.5rem;
+                    text-align: right;
+                }
+
+                .pin {
+                    border: none;
+                    background-color: transparent;
+                    padding-inline: 0;
+                    height: 18px;
+                    font-size: 0;
+
+                    svg {
+                        padding-block: 2px;
+                        height: 100%;
+                        color: gray;
+                    }
+
+                    &:hover,
+                    &.pinned {
+                        svg {
+                            color: white;
+                        }
+                    }
+                }
+            }
+        }
+
+        .spell-slots {
+            top: calc(32px + var(--sticky-height));
+        }
+    }
+}
+
+.statblock-dice-tray {
+    .dice-tray-content {
+        max-height: 80vh;
+    }
+}

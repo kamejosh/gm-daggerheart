@@ -1,0 +1,71 @@
+.stats {
+    display: flex;
+    gap: 2px 0.5ch;
+    flex-wrap: wrap;
+    grid-area: stats;
+    justify-content: stretch;
+}
+
+.stat {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.name {
+    font-family: 'Roboto Mono', monospace;
+    font-size: 0.8rem;
+    background-color: lightgrey;
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+    color: black;
+    padding: 0 2px;
+    text-transform: uppercase;
+    font-weight: 600;
+}
+
+.statValue {
+    flex-grow: 1;
+    display: flex;
+    justify-content: center;
+    border-top-left-radius: 0 !important;
+    border-top-right-radius: 0 !important;
+}
+
+.statsWrapper {
+    display: flex;
+    gap: 4px;
+    align-items: flex-start;
+}
+
+.edit {
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    height: 18px;
+    width: 18px;
+    padding: 0;
+    border: none;
+
+    svg {
+        width: 18px;
+        height: 18px;
+        object-fit: contain;
+        overflow: visible;
+        fill: white;
+    }
+
+}
+
+.active {
+    svg {
+        fill: orange;
+    }
+}
+
+.statInput {
+    align-self: center;
+    width: 21px;
+    border: 1px solid lightgrey;
+    text-align: center;
+}
