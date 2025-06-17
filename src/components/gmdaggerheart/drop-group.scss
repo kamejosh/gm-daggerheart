@@ -48,14 +48,15 @@
 
     .group-title {
         display: grid;
-        grid-template-columns: 120px repeat(2, auto);
+        grid-template-columns: 120px auto;
         gap: 1ch;
         padding-block: 5px;
         font-weight: 600;
         text-align: left;
+        width: 100%;
 
         @include breakpoint.laptop {
-            grid-template-columns: 150px repeat(2, auto);
+            grid-template-columns: 150px auto;
         }
 
         .group-general {

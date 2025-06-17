@@ -37,7 +37,7 @@ export const Stress = ({ id }: { id: string }) => {
                 }}
                 onContextMenu={async (e) => {
                     e.preventDefault();
-                    const stress = Math.min(data.stress.current - 1, data.stress.max);
+                    const stress = Math.max(data.stress.current - 1, 0);
                     await updateTokenMetadata({ ...data, stress: { ...data.stress, current: stress } }, [id]);
                 }}
                 percent={(data.stress.max / data.stress.current) * 100}

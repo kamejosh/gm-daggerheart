@@ -5,7 +5,6 @@
     position: relative;
     column-gap: 1ch;
     row-gap: 0.5ch;
-    flex-wrap: wrap;
     justify-content: flex-start;
     cursor: pointer;
     border-radius: 4px;
@@ -14,7 +13,6 @@
     min-height: 46px;
     scroll-margin: 100px;
     outline: 1px solid #ffffff22;
-    width: 100%;
 
     @include breakpoint.laptop {
         grid-template-rows: 1fr;
@@ -65,6 +63,10 @@
             opacity: 1;
             width: 20px;
         }
+    }
+
+    &.vulnerable {
+        background: linear-gradient(to bottom, #ff000044 10%, transparent );
     }
 
     .player-name {

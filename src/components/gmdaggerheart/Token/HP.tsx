@@ -36,7 +36,7 @@ export const HP = ({ id }: { id: string }) => {
                 }}
                 onContextMenu={async (e) => {
                     e.preventDefault();
-                    const hp = Math.min(data.hp.current - 1, data.hp.max);
+                    const hp = Math.max(data.hp.current - 1, 0);
                     await changeHp(hp, data, item, hpRef);
                 }}
                 percent={(data.hp.current / data.hp.max) * 100}

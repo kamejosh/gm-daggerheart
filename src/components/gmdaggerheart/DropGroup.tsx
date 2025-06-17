@@ -3,10 +3,7 @@ import { DraggableTokenList } from "./TokenList.tsx";
 import OBR, { Image, Metadata } from "@owlbear-rodeo/sdk";
 import { SceneMetadata } from "../../helper/types.ts";
 import { metadataKey } from "../../helper/variables.ts";
-import { getIsOnMap, toggleOnMap } from "../../helper/multiTokenHelper.ts";
 import { useMetadataContext } from "../../context/MetadataContext.ts";
-import { MapButton } from "./Token/MapButton.tsx";
-import { HPSvg } from "../svgs/HPSvg.tsx";
 import Tippy from "@tippyjs/react";
 import "./drop-group.scss";
 import { useShallow } from "zustand/react/shallow";
@@ -47,40 +44,6 @@ export const DropGroup = (props: DropGroupProps) => {
                             <span>{props.title}</span>
                         </div>
                     </Tippy>
-                </div>
-                <div className={"settings"}>
-                    <div className={"setting"}>
-                        <HPSvg percent={100} name={"hp"} color={"#888888"} />
-                        <MapButton
-                            onClick={async () => {
-                                await toggleOnMap(props.list);
-                            }}
-                            onContextMenu={async () => {}}
-                            active={getIsOnMap(props.list)}
-                            players={false}
-                            tooltip={"Show Info on map (right click for players)"}
-                        />
-                    </div>
-
-                    {/*                    <div className={"setting"}>
-                        <RestSvg color={"#888888"} />
-                        <button
-                            className={"button short"}
-                            onClick={() => {
-                                rest(props.list, "Short Rest");
-                            }}
-                        >
-                            short
-                        </button>
-                        <button
-                            className={"button long"}
-                            onClick={() => {
-                                rest(props.list, "Long Rest");
-                            }}
-                        >
-                            long
-                        </button>
-                    </div>*/}
                 </div>
 
                 <button

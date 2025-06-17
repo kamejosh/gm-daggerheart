@@ -15,6 +15,8 @@ import { Armor } from "./Armor.tsx";
 import { Hope } from "./Hope.tsx";
 import { Evasion } from "./Evasion.tsx";
 import { Spotlight } from "./Spotlight.tsx";
+import { Damage } from "./Damage.tsx";
+import { Owner } from "./Owner.tsx";
 
 type TokenProps = {
     id: string;
@@ -146,7 +148,7 @@ export const Token = (props: TokenProps) => {
             ref={containerRef}
             className={`token ${playerContext.role === "PLAYER" ? "player" : ""} ${
                 props.selected ? "selected" : ""
-            } ${component}`}
+            } ${component} ${data.stress.current === data.stress.max ? "vulnerable" : ""}`}
             onClick={(e) => {
                 handleOnPlayerClick(e);
             }}
@@ -180,7 +182,13 @@ export const Token = (props: TokenProps) => {
                 <Hope id={props.id} />
                 <Spotlight id={props.id} />
             </div>
-            <Stats data={data} item={item} />
+            <div className={"section"}>
+                <Stats data={data} item={item} />
+                <Damage id={props.id} />
+            </div>
+            <div className={"section"}>
+                <Owner id={props.id} />
+            </div>
         </div>
     ) : data.showOnMap && item.visible ? (
         <div ref={containerRef} className={`token`}>
