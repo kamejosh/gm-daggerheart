@@ -17,7 +17,7 @@ import { useTokenListContext } from "../../context/TokenContext.tsx";
 import { DraggableLocation, DropResult, DragDropContext } from "@hello-pangea/dnd";
 import { updateItems } from "../../helper/obrHelper.ts";
 import { useShallow } from "zustand/react/shallow";
-import styles from "./gmd.module.scss";
+import { Fear } from "./Fear.tsx";
 
 export const GMDaggerheart = () => {
     return (
@@ -73,6 +73,7 @@ const Content = () => {
 
     const items = useMemo(() => (tokens ? [...tokens].map((t) => t[1].item) : []), [tokens]);
     const playerTokens = tokens ? [...tokens].filter((t) => t[1].data.isPlayer).map((t) => t[1].item) : [];
+    console.log(playerTokens);
 
     const tokenLists = useMemo(() => {
         const tokenMap = new Map<string, Array<Image>>();
@@ -231,17 +232,13 @@ const Content = () => {
     return playerContext.role ? (
         <div className={`gm-grimoire ${playerContext.role === "PLAYER" ? "player" : ""}`}>
             <Helpbuttons ignoredChanges={ignoredChanges} setIgnoredChange={setIgnoredChanges} />
-            {playerContext.role === "PLAYER" ? (
-                <h1 className={"title"}>
-                    GM's Daggerheart <span className={"small"}>{version}</span>
-                </h1>
-            ) : null}
+            <h1 className={"title"}>
+                GM's Daggerheart <span className={"small"}>{version}</span>
+            </h1>
             <div className={"grimoire-content"}>
+                <Fear />
                 {playerContext.role === "GM" ? (
                     <>
-                        <h1 className={"gmg-name"}>
-                            GM's Daggerheart <span className={styles.small}>{version}</span>
-                        </h1>
                         <DragDropContext onDragEnd={onDragEnd}>
                             {scene && scene.groups && scene.groups?.length > 0 ? (
                                 scene.groups?.map((group) => {

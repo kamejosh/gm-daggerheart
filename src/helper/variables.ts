@@ -83,7 +83,7 @@ export const defaultMetadata: GMDMetadata = {
         sever: 12,
     },
     spotlight: 0,
-    isPlayer: true,
-    showOnMap: true,
+    isPlayer: false,
+    showOnMap: false,
     group: "Default",
 };

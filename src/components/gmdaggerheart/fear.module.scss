@@ -1,0 +1,21 @@
+.fear {
+    display: flex;
+    justify-content: center;
+
+    svg {
+        cursor: pointer;
+    }
+}
+
+.active {
+    svg {
+        fill:red;
+        background: radial-gradient(red, transparent 50%, transparent);
+    }
+}
+
+.inactive {
+    svg {
+        fill: #ffffff44;
+    }
+}

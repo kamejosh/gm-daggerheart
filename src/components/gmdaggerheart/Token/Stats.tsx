@@ -107,7 +107,7 @@ export const Stat = ({
                             await updateTokenMetadata({ ...data, hope: Math.min(data.hope + 1, 6) }, [id]);
                         } else if (rollResult.values[0].value < rollResult.values[1].value) {
                             rollResult.label += ": Fear";
-                            await updateRoomMetadata(room, { fear: room?.fear ? Math.max(room?.fear + 1, 13) : 1 });
+                            await updateRoomMetadata(room, { fear: room?.fear ? Math.min(room?.fear + 1, 13) : 1 });
                         } else {
                             rollResult.label += ": Critical";
                             await updateTokenMetadata(
