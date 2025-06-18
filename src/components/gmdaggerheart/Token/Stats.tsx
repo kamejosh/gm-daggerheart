@@ -34,6 +34,7 @@ export const Stat = ({
     const [theme, hopeTheme, fearTheme, initialized, rollerApi] = useDiceRoller(
         useShallow((state) => [state.theme, state.hopeTheme, state.fearTheme, state.initialized, state.rollerApi]),
     );
+    const [debounceValue, setDebounceValue] = useState<string>(value.toString());
     const token = useTokenListContext(useShallow((state) => state.tokens?.get(id)));
     const data = token?.data as GMDMetadata;
     const addRoll = useRollLogContext(useShallow((state) => state.addRoll));
@@ -168,10 +169,13 @@ export const Stat = ({
             {edit ? (
                 <input
                     className={styles.statInput}
-                    value={value}
+                    value={debounceValue}
                     onChange={(e) => {
-                        const newValue = toNumber(e.target.value);
-                        setValue(newValue);
+                        const newValue = e.target.value;
+                        setDebounceValue(newValue);
+                    }}
+                    onBlur={(e) => {
+                        setValue(toNumber(e.target.value));
                     }}
                 />
             ) : (
