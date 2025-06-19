@@ -224,6 +224,7 @@ export const rollerCallback = async (e: IRoll, addRoll: (entry: RollLogEntryType
     } else {
         addRoll(rollLogEntry);
     }
+    rollLogStore.persist.rehydrate();
 };
 
 export const addRollerApiCallbacks = async (roller: ThreeDDiceAPI, addRoll: (entry: RollLogEntryType) => void) => {
