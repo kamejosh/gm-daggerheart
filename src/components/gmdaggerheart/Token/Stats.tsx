@@ -8,7 +8,7 @@ import { autoPlacement, safePolygon, useFloating, useHover, useInteractions } fr
 import { useMetadataContext } from "../../../context/MetadataContext.ts";
 import { IDiceRoll, Operator, parseRollEquation } from "dddice-js";
 import { getUserUuid, localRoll, rollerCallback, rollWrapper } from "../../../helper/diceHelper.ts";
-import { rollLogStore, useRollLogContext } from "../../../context/RollLogContext.tsx";
+import { useRollLogContext } from "../../../context/RollLogContext.tsx";
 import styles from "./stats.module.scss";
 import { EditSvg } from "../../svgs/EditSvg.tsx";
 import { updateTokenMetadata } from "../../../helper/tokenHelper.ts";
