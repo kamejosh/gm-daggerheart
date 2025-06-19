@@ -495,14 +495,11 @@ const DualityDiceButton = () => {
                 parsed.dice.push(...p.dice);
             });
 
-            if (modifier !== "ADV" && modifier !== "DIS") {
-                parsed.operator = { k: "h1" };
-            } else if (modifier === "ADV") {
+            if (modifier === "ADV") {
                 parsed.dice.push({ type: "d6", theme: theme?.id || "dddice-bees" });
-                parsed.operator = { k: { h1: [0, 1] }, "*": { "+1": [2] } };
             } else if (modifier === "DIS") {
                 parsed.dice.push({ type: "d6", theme: theme?.id || "dddice-bees" });
-                parsed.operator = { k: { h1: [0, 1] }, "*": { "-1": [2] } };
+                parsed.operator = { "*": { "-1": [2] } };
             }
 
             if (rollerApi) {
@@ -527,7 +524,7 @@ const DualityDiceButton = () => {
                 }
             }
         } else {
-            let notation = "2d12kh1";
+            let notation = "2d12";
             if (modifier === "ADV") {
                 notation += "+1d6";
             } else if (modifier === "DIS") {

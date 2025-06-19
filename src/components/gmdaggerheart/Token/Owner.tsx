@@ -5,7 +5,7 @@ import { GMDMetadata } from "../../../helper/types.ts";
 import OBR, { Image, Player } from "@owlbear-rodeo/sdk";
 import { useEffect, useState } from "react";
 import Tippy from "@tippyjs/react";
-import { metadataKey } from "../../../helper/variables.ts";
+import { itemMetadataKey } from "../../../helper/variables.ts";
 import "./sheet.scss";
 
 export const Owner = (props: { id: string }) => {
@@ -41,10 +41,11 @@ export const Owner = (props: { id: string }) => {
                             await OBR.scene.items.updateItems([item], (items) => {
                                 items.forEach((item) => {
                                     item.createdUserId = e.target.value;
-                                    item.metadata[metadataKey] = {
+                                    item.metadata[itemMetadataKey] = {
                                         ...data,
                                         isPlayer: e.target.value !== playerContext.id,
                                     };
+                                    console.log(item.metadata[itemMetadataKey]);
                                 });
                             });
                         }}

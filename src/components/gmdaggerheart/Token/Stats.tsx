@@ -80,14 +80,11 @@ export const Stat = ({
                 parsed.dice.push(...p.dice);
             });
 
-            if (modifier !== "ADV" && modifier !== "DIS") {
-                parsed.operator = { k: "h1" };
-            } else if (modifier === "ADV") {
+            if (modifier === "ADV") {
                 parsed.dice.push({ type: "d6", theme: theme?.id || "dddice-bees" });
-                parsed.operator = { k: { h1: [0, 1] }, "*": { "+1": [2] } };
             } else if (modifier === "DIS") {
                 parsed.dice.push({ type: "d6", theme: theme?.id || "dddice-bees" });
-                parsed.operator = { k: { h1: [0, 1] }, "*": { "-1": [2] } };
+                parsed.operator = { "*": { "-1": [2] } };
             }
 
             if (value !== 0) {
@@ -108,7 +105,7 @@ export const Stat = ({
                             await updateTokenMetadata({ ...data, hope: Math.min(data.hope + 1, 6) }, [id]);
                         } else if (rollResult.values[0].value < rollResult.values[1].value) {
                             rollResult.label += ": Fear";
-                            await updateRoomMetadata(room, { fear: room?.fear ? Math.min(room?.fear + 1, 13) : 1 });
+                            await updateRoomMetadata(room, { fear: room?.fear ? Math.min(room?.fear + 1, 12) : 1 });
                         } else {
                             rollResult.label += ": Critical";
                             await updateTokenMetadata(
@@ -127,27 +124,22 @@ export const Stat = ({
                 }
             }
         } else {
-            let notation = "2d12kh1";
+            let notation = "2d12";
             if (modifier === "ADV") {
                 notation += "+1d6";
             } else if (modifier === "DIS") {
                 notation += "-1d6";
             }
             if (value !== 0) {
-                notation += Intl.NumberFormat("en-US", { signDisplay: "always" }).format(value);
+                notation += `+ ${value}`;
             }
-            let label = name;
-            if (modifier === "SELF") {
-                label += ": HIDE";
-            } else if (modifier === "ADV") {
-                label += ": ADV";
-            }
-            const result = await localRoll(notation, label, addRoll, modifier === "SELF", character, true);
+
+            const result = await localRoll(notation, name, addRoll, modifier === "SELF", character, true);
 
             // @ts-ignore
             const rolls: Array<{ value: number }> = result?.rolls[0].rolls;
             if (rolls && rolls[0].value < rolls[1].value) {
-                await updateRoomMetadata(room, { fear: room?.fear ? Math.min(room?.fear + 1, 13) : 1 });
+                await updateRoomMetadata(room, { fear: room?.fear ? Math.min(room?.fear + 1, 12) : 1 });
             } else if (rolls && rolls[0].value > rolls[1].value) {
                 await updateTokenMetadata({ ...data, hope: Math.min(data.hope + 1, 6) }, [id]);
             } else {

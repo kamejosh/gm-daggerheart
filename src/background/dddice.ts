@@ -3,7 +3,7 @@ import { diceTrayModal, diceTrayModalId, metadataKey, rollMessageChannel } from 
 import { DiceUser, RoomMetadata } from "../helper/types.ts";
 import { getRoomDiceUser } from "../helper/helpers.ts";
 import { AsyncLock } from "../helper/AsyncLock.ts";
-import { ThreeDDiceAPI } from "dddice-js";
+import { IRoll, ThreeDDiceAPI } from "dddice-js";
 import {
     blastMessage,
     connectToDddiceRoom,
@@ -121,6 +121,7 @@ export const setupDddice = async () => {
         try {
             if (event.type === "message") {
                 if (event.data.type === "roll:finished") {
+                    event.data.roll.label = updateRollLabel(event.data.roll);
                     await rollerCallback(event.data.roll, rollLogStore.getState().addRoll);
                 }
                 if (event.data.type === "dddice.loaded") {
@@ -132,4 +133,19 @@ export const setupDddice = async () => {
     });
     blastMessage({ type: "dddice.isLoaded" });
     console.info("GM's Daggerheart - Finished setting up dddice");
+};
+
+const updateRollLabel = (roll: IRoll): string => {
+    const dualities = ["Roll Duality", "Agility", "Strength", "Finesse", "Instinct", "Presence", "Knowledge"];
+    if (roll.label && dualities.includes(roll.label)) {
+        if (roll.values[0].value > roll.values[1].value) {
+            roll.label += ": Hope";
+        } else if (roll.values[0].value < roll.values[1].value) {
+            roll.label += ": Fear";
+        } else {
+            roll.label += ": Critical";
+        }
+        return roll.label;
+    }
+    return "";
 };
