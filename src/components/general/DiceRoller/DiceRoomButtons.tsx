@@ -531,7 +531,7 @@ const DualityDiceButton = () => {
                 notation += "-1d6";
             }
 
-            await localRoll(notation, "Roll Custom", addRoll, modifier === "SELF", undefined, true);
+            await localRoll(notation, "Roll Duality", addRoll, modifier === "SELF", undefined, true);
         }
     };
 
