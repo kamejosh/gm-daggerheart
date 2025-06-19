@@ -45,7 +45,6 @@ export const Owner = (props: { id: string }) => {
                                         ...data,
                                         isPlayer: e.target.value !== playerContext.id,
                                     };
-                                    console.log(item.metadata[itemMetadataKey]);
                                 });
                             });
                         }}

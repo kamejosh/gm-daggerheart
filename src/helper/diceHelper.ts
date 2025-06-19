@@ -391,7 +391,6 @@ export const localRoll = async (
 ) => {
     try {
         const roll = new DiceRoll(diceEquation.replaceAll(" ", ""));
-        console.log(roll);
         if (isStatRoll) {
             // @ts-ignore
             if (roll.rolls[0].rolls[0].value > roll.rolls[0].rolls[1].value) {
