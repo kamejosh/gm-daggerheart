@@ -28,21 +28,29 @@ export const Armor = ({ id, hasOwnership }: { id: string; hasOwnership: boolean 
 
     return (
         <div className={"token-armor"}>
-            <ShieldSvg
-                onClick={async () => {
-                    if (hasOwnership) {
-                        const armor = Math.min(data.armor.current + 1, data.armor.max);
-                        await updateTokenMetadata({ ...data, armor: { ...data.armor, current: armor } }, [id]);
-                    }
-                }}
-                onContextMenu={async (e) => {
-                    if (hasOwnership) {
-                        e.preventDefault();
-                        const armor = Math.max(data.armor.current - 1, 0);
-                        await updateTokenMetadata({ ...data, armor: { ...data.armor, current: armor } }, [id]);
-                    }
-                }}
-            />
+            <Tippy
+                content={"Armor (click to add, right click to remove)"}
+                placement={"bottom-start"}
+                disabled={!hasOwnership}
+            >
+                <div>
+                    <ShieldSvg
+                        onClick={async () => {
+                            if (hasOwnership) {
+                                const armor = Math.min(data.armor.current + 1, data.armor.max);
+                                await updateTokenMetadata({ ...data, armor: { ...data.armor, current: armor } }, [id]);
+                            }
+                        }}
+                        onContextMenu={async (e) => {
+                            if (hasOwnership) {
+                                e.preventDefault();
+                                const armor = Math.max(data.armor.current - 1, 0);
+                                await updateTokenMetadata({ ...data, armor: { ...data.armor, current: armor } }, [id]);
+                            }
+                        }}
+                    />
+                </div>
+            </Tippy>
             <div className={"current-hp"}>
                 {hasOwnership ? (
                     <>

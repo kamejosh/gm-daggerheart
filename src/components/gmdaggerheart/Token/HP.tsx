@@ -29,23 +29,31 @@ export const HP = ({ id, hasOwnership }: { id: string; hasOwnership: boolean }) 
 
     return (
         <div className={"token-hp"}>
-            <HPSvg
-                onClick={async () => {
-                    if (hasOwnership) {
-                        const hp = Math.min(data.hp.current + 1, data.hp.max);
-                        await changeHp(hp, data, item, hpRef);
-                    }
-                }}
-                onContextMenu={async (e) => {
-                    if (hasOwnership) {
-                        e.preventDefault();
-                        const hp = Math.max(data.hp.current - 1, 0);
-                        await changeHp(hp, data, item, hpRef);
-                    }
-                }}
-                percent={(data.hp.current / data.hp.max) * 100}
-                name={item.id}
-            />
+            <Tippy
+                content={"HP (click to add, right click to remove)"}
+                placement={"bottom-start"}
+                disabled={!hasOwnership}
+            >
+                <div>
+                    <HPSvg
+                        onClick={async () => {
+                            if (hasOwnership) {
+                                const hp = Math.min(data.hp.current + 1, data.hp.max);
+                                await changeHp(hp, data, item, hpRef);
+                            }
+                        }}
+                        onContextMenu={async (e) => {
+                            if (hasOwnership) {
+                                e.preventDefault();
+                                const hp = Math.max(data.hp.current - 1, 0);
+                                await changeHp(hp, data, item, hpRef);
+                            }
+                        }}
+                        percent={(data.hp.current / data.hp.max) * 100}
+                        name={item.id}
+                    />
+                </div>
+            </Tippy>
             <div className={"current-hp"}>
                 {hasOwnership ? (
                     <>

@@ -21,7 +21,11 @@ export const Evasion = ({ id, hasOwnership }: { id: string; hasOwnership: boolea
 
     return (
         <div className={"token-evasion"}>
-            <EvasionSvg />
+            <Tippy content={"Evasion"} placement={"bottom-start"} disabled={!hasOwnership}>
+                <div>
+                    <EvasionSvg />
+                </div>
+            </Tippy>
             <div className={"current-hp"}>
                 {hasOwnership ? (
                     <>

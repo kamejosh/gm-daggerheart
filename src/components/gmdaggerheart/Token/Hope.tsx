@@ -21,21 +21,29 @@ export const Hope = ({ id, hasOwnership }: { id: string; hasOwnership: boolean }
 
     return (
         <div className={"token-hope"}>
-            <DiamondSvg
-                onClick={async () => {
-                    if (hasOwnership) {
-                        const hope = Math.min(data.hope + 1, 6);
-                        await updateTokenMetadata({ ...data, hope: hope }, [id]);
-                    }
-                }}
-                onContextMenu={async (e) => {
-                    if (hasOwnership) {
-                        e.preventDefault();
-                        const hope = Math.max(data.hope - 1, 0);
-                        await updateTokenMetadata({ ...data, hope: hope }, [id]);
-                    }
-                }}
-            />
+            <Tippy
+                content={"Hope (click to add, right click to remove)"}
+                placement={"bottom-start"}
+                disabled={!hasOwnership}
+            >
+                <div>
+                    <DiamondSvg
+                        onClick={async () => {
+                            if (hasOwnership) {
+                                const hope = Math.min(data.hope + 1, 6);
+                                await updateTokenMetadata({ ...data, hope: hope }, [id]);
+                            }
+                        }}
+                        onContextMenu={async (e) => {
+                            if (hasOwnership) {
+                                e.preventDefault();
+                                const hope = Math.max(data.hope - 1, 0);
+                                await updateTokenMetadata({ ...data, hope: hope }, [id]);
+                            }
+                        }}
+                    />
+                </div>
+            </Tippy>
             <div className={"current-hp"}>
                 {hasOwnership ? (
                     <>

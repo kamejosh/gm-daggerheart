@@ -30,23 +30,42 @@ export const Stress = ({ id, hasOwnership }: { id: string; hasOwnership: boolean
 
     return (
         <div className={"token-stress"}>
-            <StressSvg
-                onClick={async () => {
-                    if (hasOwnership) {
-                        const stress = Math.min(data.stress.current + 1, data.stress.max);
-                        await updateTokenMetadata({ ...data, stress: { ...data.stress, current: stress } }, [id]);
-                    }
-                }}
-                onContextMenu={async (e) => {
-                    if (hasOwnership) {
-                        e.preventDefault();
-                        const stress = Math.max(data.stress.current - 1, 0);
-                        await updateTokenMetadata({ ...data, stress: { ...data.stress, current: stress } }, [id]);
-                    }
-                }}
-                percent={(data.stress.max / data.stress.current) * 100}
-                name={item.id}
-            />
+            <Tippy
+                content={"Stress (click to add, right click to remove)"}
+                placement={"bottom-start"}
+                disabled={!hasOwnership}
+            >
+                <div>
+                    <StressSvg
+                        onClick={async () => {
+                            if (hasOwnership) {
+                                const stress = Math.min(data.stress.current + 1, data.stress.max);
+                                const hp =
+                                    stress === data.stress.max ? Math.max(data.hp.current - 1, 0) : data.hp.current;
+                                await updateTokenMetadata(
+                                    {
+                                        ...data,
+                                        stress: { ...data.stress, current: stress },
+                                        hp: { ...data.hp, current: hp },
+                                    },
+                                    [id],
+                                );
+                            }
+                        }}
+                        onContextMenu={async (e) => {
+                            if (hasOwnership) {
+                                e.preventDefault();
+                                const stress = Math.max(data.stress.current - 1, 0);
+                                await updateTokenMetadata({ ...data, stress: { ...data.stress, current: stress } }, [
+                                    id,
+                                ]);
+                            }
+                        }}
+                        percent={(data.stress.max / data.stress.current) * 100}
+                        name={item.id}
+                    />
+                </div>
+            </Tippy>
             <div className={"current-hp"}>
                 {hasOwnership ? (
                     <>

@@ -21,21 +21,29 @@ export const Spotlight = ({ id, hasOwnership }: { id: string; hasOwnership: bool
 
     return (
         <div className={"token-spotlight"}>
-            <SpotlightSvg
-                onClick={async () => {
-                    if (hasOwnership) {
-                        const spotlight = Math.min(data.spotlight + 1, 6);
-                        await updateTokenMetadata({ ...data, spotlight: spotlight }, [id]);
-                    }
-                }}
-                onContextMenu={async (e) => {
-                    if (hasOwnership) {
-                        e.preventDefault();
-                        const spotlight = Math.max(data.spotlight - 1, 0);
-                        await updateTokenMetadata({ ...data, spotlight: spotlight }, [id]);
-                    }
-                }}
-            />
+            <Tippy
+                content={"Spotlight (click to add, right click to remove)"}
+                placement={"bottom-start"}
+                disabled={!hasOwnership}
+            >
+                <div>
+                    <SpotlightSvg
+                        onClick={async () => {
+                            if (hasOwnership) {
+                                const spotlight = Math.min(data.spotlight + 1, 6);
+                                await updateTokenMetadata({ ...data, spotlight: spotlight }, [id]);
+                            }
+                        }}
+                        onContextMenu={async (e) => {
+                            if (hasOwnership) {
+                                e.preventDefault();
+                                const spotlight = Math.max(data.spotlight - 1, 0);
+                                await updateTokenMetadata({ ...data, spotlight: spotlight }, [id]);
+                            }
+                        }}
+                    />
+                </div>
+            </Tippy>
             <div className={"current-hp"}>
                 {hasOwnership ? (
                     <>
