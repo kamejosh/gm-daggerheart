@@ -105,7 +105,7 @@ const setupContextMenu = async () => {
         ],
         embed: {
             url: "/popover.html",
-            height: 100,
+            height: 170,
         },
     });
 

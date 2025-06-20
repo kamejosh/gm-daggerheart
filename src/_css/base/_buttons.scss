@@ -36,59 +36,9 @@ button,
     background-color: var(--bg-color);
 
     @include breakpoint.mobile-and-tablet-only {
-        position: initial;
-        grid-template-columns: repeat(3, 25px);
-        grid-template-areas:
-            "settings changelog help statblock statblock ta ta"
-            ". patreon discord statblock statblock ta ta";
-        justify-content: flex-end;
-        box-shadow: none;
-        background-color: transparent;
-        width: 100%;
-
-        .tabletop-almanac-button {
-            grid-area: ta;
-        }
-
-        .patreon-button {
-            grid-area: patreon;
-        }
-
-        .statblock-button {
-            grid-area: statblock;
-        }
-
-        .settings-button {
-            grid-area: settings;
-        }
-
-        .discord-button {
-            grid-area: discord;
-        }
-
-        .change-log-button {
-            grid-area: changelog;
-        }
-
-        .help-button {
-            grid-area: help;
-        }
-
-        .change-log-button {
-            &.ignored {
-                animation: changeColor 1s ease-in-out 0s 30 alternate;
-            }
-        }
-
-        &.statblock {
-            display: flex;
-
-            .top-button {
-                width: 20px;
-                height: 21px;
-                font-size: 0.7rem;
-            }
-        }
+        position: absolute;
+        top: 0;
+        right: 0;
     }
 }
 

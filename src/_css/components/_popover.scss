@@ -7,7 +7,6 @@ body:has(.popover-app) {
         display: grid;
         grid-template-columns: repeat(2, 1fr);
         justify-content: space-between;
-        height: 100px;
         overflow: hidden;
 
         .token-names {
@@ -99,7 +98,7 @@ body:has(.popover-app) {
         margin: 0;
         padding: 0;
         width: 100%;
-        height: 100px;
+        height: 170px;
 
         .popover-spinner {
             margin: auto;

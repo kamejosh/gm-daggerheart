@@ -6,12 +6,7 @@
     flex-direction: column;
     align-items: flex-start;
     gap: 2px;
-    margin-top: 60px;
     margin-bottom: 36px;
-
-    @include breakpoint.tablet {
-        margin-top: 0;
-    }
 
     &.player {
         .help-buttons {
@@ -20,137 +15,19 @@
     }
 
     .title {
-        display: none;
         margin: 0;
-
-        @include breakpoint.laptop {
-            display: initial;
-        }
 
         .small {
             font-size: 10px;
         }
     }
 
-    .headings {
-        display: flex;
-        position: fixed;
-        top: calc(1rem - 6px);
-        flex-wrap: wrap;
-        align-items: center;
-        gap: 1ch;
-        z-index: 200;
-        box-shadow: 0 0 10px var(--bg-color);
-        border-radius: 4px;
-        background-color: var(--bg-color);
-        padding: 4px 8px;
-        max-width: 210px;
-
-        @include breakpoint.laptop {
-            flex-wrap: nowrap;
-            width: min-content;
-            height: 25px;
-        }
-
-        .toggle-preview {
-            opacity: 0.8;
-            height: 20px;
-
-            &.active {
-                .player-icon {
-                    fill: white;
-                }
-            }
-
-            .player-icon {
-                fill: grey;
-                height: 19px;
-            }
-        }
-
-        .initiative-order {
-            display: flex;
-            gap: 0.5ch;
-
-            .initiative-icon {
-                fill: green;
-            }
-
-            .sort-button {
-                position: relative;
-                padding-inline: 0;
-                width: 25px;
-                height: 20px;
-
-                &.reverse {
-                    .arrow-icon {
-                        scale: 1;
-                    }
-                }
-
-                &.disabled {
-                    &::after {
-                        position: absolute;
-                        top: 0;
-                        left: 50%;
-                        rotate: 45deg;
-                        background-color: white;
-                        width: 1px;
-                        height: 100%;
-                        content: "";
-                    }
-                }
-
-                .arrow-icon {
-                    scale: -1;
-                    transition: all 0.25s ease;
-                    width: 100%;
-                    height: 17px;
-                    fill: white;
-                    object-position: center;
-                }
-            }
-        }
-
-        .battle-rounds {
-            display: flex;
-            align-items: center;
-            gap: 0.5ch;
-            border-radius: 4px;
-            height: 20px;
-
-            &::before {
-                display: none;
-                margin-right: 4px;
-                background-color: white;
-                width: 2px;
-                height: 100%;
-                content: "";
-
-                @include breakpoint.tablet {
-                    display: block;
-                }
-            }
-
-            button {
-                height: 20px;
-                white-space: nowrap;
-            }
-
-            .battle-round {
-                box-shadow: 0 0 -4px var(--bg-color);
-                color: red;
-                font-weight: bold;
-                line-height: 1;
-            }
-        }
-    }
 
     .grimoire-content {
         width: 100%;
         margin-top: 10px;
 
-        @include breakpoint.laptop {
+        @include breakpoint.mobile-and-tablet-only{
             margin-top: 30px;
         }
 
