@@ -17,12 +17,12 @@
 
     @include breakpoint.tablet {
         display: grid;
-        grid-template-rows: repeat(2, auto);
+        grid-template-rows: repeat(3, auto);
         grid-template-columns: repeat(4, auto);
     }
 
     @include breakpoint.laptop {
-        grid-template-rows: 1fr;
+        grid-template-rows: 2fr;
         grid-template-columns: repeat(5, auto);
     }
 

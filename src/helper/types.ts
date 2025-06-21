@@ -1,3 +1,9 @@
+export type WeaponType = {
+    label: string;
+    dice: string;
+    damageType?: string;
+};
+
 export type GMDMetadata = {
     active: boolean;
     agility: number;
@@ -21,7 +27,7 @@ export type GMDMetadata = {
         current: number;
         max: number;
     };
-    damage: Array<{ label: string; dice: string }>;
+    weapons: Array<WeaponType>;
     thresholds: {
         major: number;
         sever: number;

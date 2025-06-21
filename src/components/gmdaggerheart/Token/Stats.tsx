@@ -293,7 +293,7 @@ export const Stats = ({ data, item }: { data: GMDMetadata; item: Image }) => {
                     name={"Knowledge"}
                     character={character}
                     setValue={async (value: number) => {
-                        const newData = { ...data, agility: value };
+                        const newData = { ...data, knowledge: value };
                         await updateTokenMetadata(newData, [item.id]);
                     }}
                     id={item.id}

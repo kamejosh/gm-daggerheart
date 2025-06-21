@@ -1,0 +1,47 @@
+.weaponContainer {
+    display: flex;
+    grid-column: span 5;
+    align-items: flex-start;
+    gap: 2ch;
+    width: 100%;
+}
+
+.weaponList {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    grid-auto-flow: row;
+    column-gap: 1ch;
+    align-items: center;
+}
+
+.weaponInput {
+    display: flex;
+    grid-column: span 2;
+    align-items: center;
+    gap: 1ch;
+}
+
+.input {
+    width: 60px;
+}
+
+.edit,
+.add,
+.delete {
+    scale: 0.8;
+    border: none;
+    background-color: transparent;
+
+    svg {
+        fill: white;
+    }
+}
+
+.small {
+    font-size: 0.7em;
+}
+
+.error {
+    outline: 1px solid red;
+    background-color: #ff000055;
+}

@@ -77,7 +77,7 @@ export const defaultMetadata: GMDMetadata = {
         max: 6,
     },
     hope: 2,
-    damage: [],
+    weapons: [],
     thresholds: {
         major: 6,
         sever: 12,

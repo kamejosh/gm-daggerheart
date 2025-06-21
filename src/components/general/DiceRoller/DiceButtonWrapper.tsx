@@ -1,7 +1,7 @@
 import { useDiceRoller } from "../../../context/DDDiceContext.tsx";
 import { useMetadataContext } from "../../../context/MetadataContext.ts";
 import { useCallback, useState } from "react";
-import { diceToRoll, getUserUuid, localRoll, rollWrapper } from "../../../helper/diceHelper.ts";
+import { diceToRoll, getUserUuid, localRoll, rollerCallback, rollWrapper } from "../../../helper/diceHelper.ts";
 import { useRollLogContext } from "../../../context/RollLogContext.tsx";
 import { IRoll, ITheme, parseRollEquation } from "dddice-js";
 import { getDiceImage, getSvgForDiceType } from "../../../helper/previewHelpers.tsx";
@@ -18,9 +18,7 @@ type DiceButtonProps = {
     label: string;
     character?: string;
     onRoll?: (rollResult?: Array<IRoll | DiceRoll | null>) => void;
-    damageDie?: boolean;
     classes?: string;
-    preview?: boolean;
 };
 export const DiceButton = (props: DiceButtonProps) => {
     const [room] = useMetadataContext(useShallow((state) => [state.room]));
@@ -60,6 +58,8 @@ export const DiceButton = (props: DiceButtonProps) => {
                             external_id: props.character,
                             whisper: modifier === "SELF" ? await getUserUuid(room, rollerApi) : undefined,
                         });
+                        // @ts-ignore
+                        await rollerCallback(rollResult, addRoll);
                     } catch {
                         console.warn("error in dice roll", parsed.dice, parsed.operator);
                     }

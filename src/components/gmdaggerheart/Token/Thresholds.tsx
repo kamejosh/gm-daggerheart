@@ -1,7 +1,7 @@
 import { useTokenListContext } from "../../../context/TokenContext.tsx";
 import { useShallow } from "zustand/react/shallow";
 import { GMDMetadata } from "../../../helper/types.ts";
-import styles from "./damage.module.scss";
+import styles from "./threshold.module.scss";
 import { updateTokenMetadata } from "../../../helper/tokenHelper.ts";
 import Tippy from "@tippyjs/react";
 import { useState } from "react";
@@ -44,7 +44,7 @@ const ConnectionArrow = ({ threshold, id }: { threshold: number; id: string }) =
     );
 };
 
-export const Damage = ({ id }: { id: string }) => {
+export const Thresholds = ({ id }: { id: string }) => {
     const token = useTokenListContext(useShallow((state) => state.tokens?.get(id)));
     const data = token?.data as GMDMetadata;
 

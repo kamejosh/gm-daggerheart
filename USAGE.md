@@ -468,16 +468,16 @@ These optional parameters are:
 + HIDE
   + Dice roll will only be visible for you other people will not be notified and it will not show up in their dice log
 
-Dice that are marked as Damage Dice have optional roll button:
+Dice that are marked as Thresholds Dice have optional roll button:
 
 + CRIT
   + automatically rolls the damage as a crit based on the selected crit rules on [Tabletop Almanac](https://tabletop-almanac.com)
 
 ![Dice Button Hover](https://raw.githubusercontent.com/kamejosh/owlbear-hp-tracker/master/docs/dice_button_hover.png)
 
-ADV and DIS are only available on d20s HIDE is available on all dice and CRIT is only available on Damage Dice.
+ADV and DIS are only available on d20s HIDE is available on all dice and CRIT is only available on Thresholds Dice.
 
-When rolling Dice Buttons in statblocks the dice context is set as meaningful as possible. This means attack rolls usually contain the attack name and "To Hit", and Damage rolls usually contain the attack name and "Damage". This is not always possible but should be close enough.
+When rolling Dice Buttons in statblocks the dice context is set as meaningful as possible. This means attack rolls usually contain the attack name and "To Hit", and Thresholds rolls usually contain the attack name and "Thresholds". This is not always possible but should be close enough.
 
 <h3 id="initiative-buttons">Initiative Buttons</h3>
 

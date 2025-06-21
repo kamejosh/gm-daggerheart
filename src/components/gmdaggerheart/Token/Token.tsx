@@ -15,8 +15,9 @@ import { Armor } from "./Armor.tsx";
 import { Hope } from "./Hope.tsx";
 import { Evasion } from "./Evasion.tsx";
 import { Spotlight } from "./Spotlight.tsx";
-import { Damage } from "./Damage.tsx";
+import { Thresholds } from "./Thresholds.tsx";
 import { Owner } from "./Owner.tsx";
+import { Weapons } from "./Weapons.tsx";
 
 type TokenProps = {
     id: string;
@@ -187,14 +188,18 @@ export const Token = (props: TokenProps) => {
                 <>
                     <div className={"section"}>
                         <Stats data={data} item={item} />
-                        <Damage id={props.id} />
+                        <Thresholds id={props.id} />
                     </div>
                     <div className={"section"}>
                         <Owner id={props.id} />
                     </div>
                 </>
             ) : null}
-            {hasOwnership && playerContext.role === "Player" ? <></> : null}
+            {hasOwnership && playerContext.role === "PLAYER" ? (
+                <>
+                    <Weapons id={props.id} />
+                </>
+            ) : null}
         </div>
     ) : data.showOnMap && item.visible ? (
         <div ref={containerRef} className={`token`}>
