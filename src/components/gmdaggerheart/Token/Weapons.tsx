@@ -22,7 +22,6 @@ const WeaponEntry = ({ weapon, id, edit, index }: { weapon: WeaponType; id: stri
     const [error, setError] = useState<boolean>(false);
 
     const label = `${weapon.label}${weapon.damageType ? ` (${weapon.damageType})` : ""}`;
-    console.log(label);
 
     if (edit) {
         return (
