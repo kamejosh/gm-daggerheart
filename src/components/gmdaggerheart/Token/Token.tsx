@@ -18,6 +18,9 @@ import { Spotlight } from "./Spotlight.tsx";
 import { Thresholds } from "./Thresholds.tsx";
 import { Owner } from "./Owner.tsx";
 import { Weapons } from "./Weapons.tsx";
+import { MapSvg } from "../../svgs/MapSvg.tsx";
+import { updateTokenMetadata } from "../../../helper/tokenHelper.ts";
+import Tippy from "@tippyjs/react";
 
 type TokenProps = {
     id: string;
@@ -192,10 +195,20 @@ export const Token = (props: TokenProps) => {
                     </div>
                     <div className={"section"}>
                         <Owner id={props.id} />
+                        <Tippy content={"Show Stats on Map"}>
+                            <button
+                                className={"map"}
+                                onClick={async () => {
+                                    await updateTokenMetadata({ ...data, showOnMap: !data.showOnMap }, [props.id]);
+                                }}
+                            >
+                                <MapSvg />
+                            </button>
+                        </Tippy>
                     </div>
                 </>
             ) : null}
-            {hasOwnership && playerContext.role === "PLAYER" ? (
+            {component !== "popover" && hasOwnership && playerContext.role === "PLAYER" ? (
                 <>
                     <Weapons id={props.id} />
                 </>

@@ -1,5 +1,5 @@
 import { GMDMetadata } from "./types.ts";
-import { Image, Item } from "@owlbear-rodeo/sdk";
+import OBR, { Image, Item } from "@owlbear-rodeo/sdk";
 import { itemMetadataKey } from "./variables.ts";
 import { RefObject } from "react";
 import { updateItems, updateList } from "./obrHelper.ts";
@@ -16,6 +16,16 @@ export const updateTokenMetadata = async (tokenData: GMDMetadata, ids: Array<str
                 });
             });
         });
+    } catch (e) {
+        const errorName =
+            isObject(e) && "error" in e && isObject(e.error) && "name" in e.error ? e.error.name : "Undefined Error";
+        console.warn(`GM's Daggerheart: Error while updating token metadata of ${ids.length} tokens: ${errorName}`);
+    }
+    try {
+        const items = await OBR.scene.items.getItems(ids);
+        for (const item of items) {
+            await updateAttachments(item, tokenData);
+        }
     } catch (e) {
         const errorName =
             isObject(e) && "error" in e && isObject(e.error) && "name" in e.error ? e.error.name : "Undefined Error";

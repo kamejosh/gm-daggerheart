@@ -2,7 +2,7 @@ import OBR, { Metadata } from "@owlbear-rodeo/sdk";
 import { ID, itemMetadataKey, metadataKey, version } from "../helper/variables.ts";
 import { ItemChanges, GMDMetadata, RoomMetadata, SceneMetadata } from "../helper/types.ts";
 import { v4 as uuidv4 } from "uuid";
-import { attachmentFilter, getAttachedItems, initToken } from "../helper/helpers.ts";
+import { getAttachedItems, initToken } from "../helper/helpers.ts";
 import { setupDddice } from "./dddice.ts";
 import { updateItems } from "../helper/obrHelper.ts";
 import { saveOrChangeAttachments, updateAttachmentChanges } from "../helper/attachmentHelpers.ts";
@@ -20,7 +20,7 @@ const initItems = async () => {
 
     for (const token of tokens) {
         const data = token.metadata[itemMetadataKey] as GMDMetadata;
-        const attachments = (await getAttachedItems(token.id, [])).filter((a) => attachmentFilter(a));
+        const attachments = await getAttachedItems(token.id, []);
 
         if (data.showOnMap) {
             await saveOrChangeAttachments(token, data, attachments, changes);

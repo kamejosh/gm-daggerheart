@@ -85,5 +85,13 @@
         justify-content: flex-start;
         align-items: center;
         gap: 2px;
+
+        .map {
+            //border: none;
+
+            svg {
+                fill: white;
+            }
+        }
     }
 }
