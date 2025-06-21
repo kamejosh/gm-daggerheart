@@ -62,9 +62,7 @@ const WeaponEntry = ({ weapon, id, edit, index }: { weapon: WeaponType; id: stri
                             const newWeapon = { ...weaponsUpdate[index], dice: diceInput };
                             weaponsUpdate.splice(index, 1, newWeapon);
                             await updateTokenMetadata({ ...data, weapons: weaponsUpdate }, [id]);
-                        } catch (e) {
-                            console.log(e);
-                        }
+                        } catch {}
                     }}
                 />
                 <input

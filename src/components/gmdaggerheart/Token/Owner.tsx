@@ -41,7 +41,6 @@ export const Owner = (props: { id: string }) => {
                             const value = e.target.value;
                             let newData = { ...data };
                             if (value !== "PC") {
-                                console.log("here", value);
                                 newData = {
                                     ...data,
                                     isPlayer: value !== playerContext.id,
