@@ -187,7 +187,7 @@ export const createAttachments = async (percentage: number, text: string, token:
         .tension(0)
         .fillColor("black")
         .fillOpacity(0.5)
-        .strokeWidth(3)
+        .strokeWidth(shapeWidth / 25)
         .strokeColor("grey")
         .name("armor")
         .position({
@@ -213,7 +213,7 @@ export const createAttachments = async (percentage: number, text: string, token:
         })
         .attachedTo(token.id)
         .layer(token.layer)
-        .plainText(String(data.armor.current))
+        .plainText(data.isPlayer ? String(data.armor.current) : String(data.evasion))
         .locked(true)
         .textAlign("CENTER")
         .textAlignVertical("BOTTOM")
@@ -238,7 +238,11 @@ export const createAttachments = async (percentage: number, text: string, token:
     stressText.metadata[infoMetadataKey] = { isHpText: true, attachmentType: "STRESS" };
     armorItem.metadata[infoMetadataKey] = { isHpText: true, attachmentType: "ARMOR" };
     armorText.metadata[infoMetadataKey] = { isHpText: true, attachmentType: "ARMOR" };
-    return [backgroundShape, hpShape, textItem, hopeItem, hopeText, stressItem, stressText, armorItem, armorText];
+    if (data.isPlayer) {
+        return [backgroundShape, hpShape, textItem, hopeItem, hopeText, stressItem, stressText, armorItem, armorText];
+    } else {
+        return [backgroundShape, hpShape, textItem, stressItem, stressText, armorItem, armorText];
+    }
 };
 
 export const calculatePercentage = (current: number, max: number) => {
