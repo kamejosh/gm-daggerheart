@@ -180,33 +180,33 @@ export const Token = (props: TokenProps) => {
             <div className={"section"}>
                 <HP id={props.id} hasOwnership={hasOwnership} />
                 <Stress id={props.id} hasOwnership={hasOwnership} />
-                <Armor id={props.id} hasOwnership={hasOwnership} />
+                {data.isPlayer ? <Armor id={props.id} hasOwnership={hasOwnership} /> : null}
             </div>
             <div className={"section"}>
+                {data.isPlayer ? <Hope id={props.id} hasOwnership={hasOwnership} /> : null}
                 <Evasion id={props.id} hasOwnership={hasOwnership} />
-                <Hope id={props.id} hasOwnership={hasOwnership} />
                 <Spotlight id={props.id} hasOwnership={hasOwnership} />
             </div>
             {hasOwnership ? (
-                <>
-                    <div className={"section"}>
-                        <Stats data={data} item={item} />
-                        <Thresholds id={props.id} />
-                    </div>
-                    <div className={"section"}>
-                        <Owner id={props.id} />
-                        <Tippy content={"Show Stats on Map"}>
-                            <button
-                                className={"map"}
-                                onClick={async () => {
-                                    await updateTokenMetadata({ ...data, showOnMap: !data.showOnMap }, [props.id]);
-                                }}
-                            >
-                                <MapSvg />
-                            </button>
-                        </Tippy>
-                    </div>
-                </>
+                <div className={"section"}>
+                    {data.isPlayer ? <Stats data={data} item={item} /> : null}
+                    <Thresholds id={props.id} />
+                </div>
+            ) : null}
+            {playerContext.role === "GM" ? (
+                <div className={`section`}>
+                    <Owner id={props.id} />
+                    <Tippy content={"Show Stats on Map"}>
+                        <button
+                            className={"map"}
+                            onClick={async () => {
+                                await updateTokenMetadata({ ...data, showOnMap: !data.showOnMap }, [props.id]);
+                            }}
+                        >
+                            <MapSvg />
+                        </button>
+                    </Tippy>
+                </div>
             ) : null}
             {component !== "popover" && hasOwnership && playerContext.role === "PLAYER" ? (
                 <>

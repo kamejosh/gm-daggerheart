@@ -1,55 +1,56 @@
 .connectionArrow {
-    height: 16px;
-    width: 30px;
+    display: flex;
+    position: relative;
+    align-items: center;
+    margin-right: 5px;
     border: 2px solid white;
     border-right: none;
-    position: relative;
-    margin-right: 5px;
-    display: flex;
-    align-items: center;
     padding-left: 2px;
+    width: 30px;
+    height: 16px;
 
     &::after {
+        display: block;
         position: absolute;
         top: 0;
         right: 0;
         translate: 7px 0.5px;
-        content: "";
-        display: block;
         rotate: 45deg;
-        width: 12px;
-        height: 12px;
         border-top: 2px solid white;
         border-right: 2px solid white;
+        width: 12px;
+        height: 12px;
+        content: "";
     }
 
     &::before {
+        display: block;
         position: absolute;
         top: 50%;
         right: 0;
         translate: 0 -50%;
-        content: "";
-        display: block;
-        width: 6px;
-        height: 6px;
         rotate: 45deg;
         background-color: white;
+        width: 6px;
+        height: 6px;
+        content: "";
     }
-
 }
 
 .damageThresholds {
-    display:flex;
+    display: flex;
+    justify-content: center;
     align-items: center;
     gap: 1ch;
+    width: 207px;
     font-size: 0.8rem;
     font-family: "Roboto Mono", monospace;
 }
 
 .edit {
     translate: -2px 0;
-    width: 18px;
-    height: 100%;
     outline: none;
     border: none !important;
+    width: 18px;
+    height: 100%;
 }

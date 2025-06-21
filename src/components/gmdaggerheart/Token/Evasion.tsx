@@ -7,6 +7,7 @@ import Tippy from "@tippyjs/react";
 import { useShallow } from "zustand/react/shallow";
 import { toNumber } from "lodash";
 import { EvasionSvg } from "../../svgs/EvasionSvg.tsx";
+import { InitiativeSvg } from "../../svgs/InitiativeSvg.tsx";
 
 export const Evasion = ({ id, hasOwnership }: { id: string; hasOwnership: boolean }) => {
     const evasionRef = useRef<HTMLInputElement>(null);
@@ -21,10 +22,12 @@ export const Evasion = ({ id, hasOwnership }: { id: string; hasOwnership: boolea
 
     return (
         <div className={"token-evasion"}>
-            <Tippy content={"Evasion"} placement={"bottom-start"} disabled={!hasOwnership}>
-                <div>
-                    <EvasionSvg />
-                </div>
+            <Tippy
+                content={data.isPlayer ? "Evasion" : "Difficulty"}
+                placement={"bottom-start"}
+                disabled={!hasOwnership}
+            >
+                <div>{data.isPlayer ? <EvasionSvg /> : <InitiativeSvg />}</div>
             </Tippy>
             <div className={"current-hp"}>
                 {hasOwnership ? (

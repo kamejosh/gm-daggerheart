@@ -87,7 +87,9 @@
         gap: 2px;
 
         .map {
-            //border: none;
+            display: flex;
+            justify-content: center;
+            align-items: center;
 
             svg {
                 fill: white;

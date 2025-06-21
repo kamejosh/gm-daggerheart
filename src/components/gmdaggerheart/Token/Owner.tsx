@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import Tippy from "@tippyjs/react";
 import { itemMetadataKey } from "../../../helper/variables.ts";
 import "./sheet.scss";
+import { updateAttachments } from "../../../helper/attachmentHelpers.ts";
 
 export const Owner = (props: { id: string }) => {
     const playerContext = usePlayerContext();
@@ -35,18 +36,33 @@ export const Owner = (props: { id: string }) => {
                         style={{
                             backgroundColor: players.find((p) => p.id === item.createdUserId)?.color ?? "transparent",
                         }}
-                        value={owner}
+                        value={data.isPlayer && item.createdUserId === playerContext.id ? "PC" : owner}
                         onChange={async (e) => {
+                            const value = e.target.value;
+                            let newData = { ...data };
+                            if (value !== "PC") {
+                                console.log("here", value);
+                                newData = {
+                                    ...data,
+                                    isPlayer: value !== playerContext.id,
+                                };
+                            } else {
+                                newData = {
+                                    ...data,
+                                    isPlayer: true,
+                                };
+                            }
                             // this doesn't work with the abstraction layer
                             await OBR.scene.items.updateItems([item], (items) => {
                                 items.forEach((item) => {
-                                    item.createdUserId = e.target.value;
-                                    item.metadata[itemMetadataKey] = {
-                                        ...data,
-                                        isPlayer: e.target.value !== playerContext.id,
-                                    };
+                                    if (e.target.value !== "PC") {
+                                        item.createdUserId = value;
+                                    }
+                                    item.metadata[itemMetadataKey] = newData;
                                 });
                             });
+
+                            await updateAttachments(item, newData);
                         }}
                         className={"select-owner"}
                     >
@@ -58,6 +74,7 @@ export const Owner = (props: { id: string }) => {
                                 </option>
                             );
                         })}
+                        <option value={"PC"}>PC</option>
                     </select>
                 </Tippy>
             ) : null}
