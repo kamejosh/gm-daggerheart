@@ -198,7 +198,7 @@ export const Token = (props: TokenProps) => {
                     <Owner id={props.id} />
                     <Tippy content={"Show Stats on Map"}>
                         <button
-                            className={"map"}
+                            className={`map ${data.showOnMap ? "active" : ""}`}
                             onClick={async () => {
                                 await updateTokenMetadata({ ...data, showOnMap: !data.showOnMap }, [props.id]);
                             }}

@@ -90,9 +90,18 @@
             display: flex;
             justify-content: center;
             align-items: center;
+            border-color: grey;
 
             svg {
-                fill: white;
+                fill: grey;
+            }
+
+            &.active {
+                border-color: white;
+
+                svg {
+                    fill: white;
+                }
             }
         }
     }

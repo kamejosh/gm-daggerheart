@@ -68,7 +68,6 @@ export type RoomMetadata = {
 };
 
 export type ItemChanges = {
-    color?: string;
     width?: number;
     text?: string;
     visible?: boolean;

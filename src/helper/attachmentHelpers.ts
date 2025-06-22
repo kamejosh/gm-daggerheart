@@ -95,7 +95,10 @@ export const createAttachments = async (percentage: number, text: string, token:
         .strokeWidth(shapeWidth / 25)
         .strokeColor("lightblue")
         .name("hope")
-        .position({ x: position.x, y: position.y - bounds.height + shapeHeight / 1.3 })
+        .position({
+            x: position.x,
+            y: bounds.position.y + bounds.height - shapeHeight / 0.75 - height - bounds.height / 10,
+        })
         .attachedTo(token.id)
         .layer(token.layer)
         .locked(true)
@@ -109,7 +112,10 @@ export const createAttachments = async (percentage: number, text: string, token:
         .textType("PLAIN")
         .width(shapeWidth / 1.5)
         .height(height)
-        .position({ x: position.x, y: position.y - bounds.height + shapeHeight / 1.2 })
+        .position({
+            x: position.x,
+            y: bounds.position.y + bounds.height - shapeHeight * 1.25 - height - bounds.height / 10,
+        })
         .attachedTo(token.id)
         .layer(token.layer)
         .plainText(String(data.hope))
@@ -174,6 +180,61 @@ export const createAttachments = async (percentage: number, text: string, token:
         .zIndex(token.zIndex + 4)
         .build();
 
+    const evasionItem = buildCurve()
+        .points([
+            { x: 0, y: 0 },
+            { x: shapeWidth / 3, y: shapeHeight / 6 },
+            { x: shapeWidth / 1.5, y: 0 },
+            { x: shapeWidth / 1.5, y: shapeHeight / 2 },
+            { x: shapeWidth / 3, y: shapeHeight / 1.5 },
+            { x: 0, y: shapeHeight / 2 },
+            { x: 0, y: 0 },
+        ])
+        .tension(0)
+        .fillColor("black")
+        .fillOpacity(0.5)
+        .strokeWidth(shapeWidth / 25)
+        .strokeColor("green")
+        .name("evasion")
+        .position({
+            x: bounds.position.x + (bounds.width < 0 ? 0 : bounds.width) - shapeWidth / 1.5,
+            y: bounds.position.y + bounds.height - shapeHeight / 1.5 - height - bounds.height / 10,
+        })
+        .attachedTo(token.id)
+        .layer(token.layer)
+        .locked(true)
+        .disableHit(true)
+        .disableAttachmentBehavior(["ROTATION"])
+        .visible(token.visible && data.isPlayer)
+        .zIndex(token.zIndex + 2)
+        .build();
+
+    const evasionText = buildText()
+        .textType("PLAIN")
+        .width(shapeWidth * 1.5)
+        .height(height)
+        .position({
+            x: bounds.position.x + (bounds.width < 0 ? 0 : bounds.width) - shapeWidth * 1.1,
+            y: bounds.position.y + bounds.height - shapeHeight / 1.85 - height - bounds.height / 10,
+        })
+        .attachedTo(token.id)
+        .layer(token.layer)
+        .plainText(String(data.evasion))
+        .locked(true)
+        .textAlign("CENTER")
+        .textAlignVertical("BOTTOM")
+        .fontWeight(600)
+        .strokeColor("black")
+        .strokeWidth(2)
+        .fontSize(height - 3)
+        .lineHeight(1)
+        .disableHit(true)
+        .disableAttachmentBehavior(["ROTATION"])
+        .visible(token.visible && data.isPlayer)
+        .name("evasion-text")
+        .zIndex(token.zIndex + 4)
+        .build();
+
     const armorItem = buildCurve()
         .points([
             { x: 0, y: 0 },
@@ -192,7 +253,7 @@ export const createAttachments = async (percentage: number, text: string, token:
         .name("armor")
         .position({
             x: bounds.position.x + (bounds.width < 0 ? 0 : bounds.width) - shapeWidth / 1.5,
-            y: bounds.position.y + bounds.height - shapeHeight / 1.5 - height - bounds.height / 10,
+            y: bounds.position.y + bounds.height - shapeHeight / 0.75 - height - bounds.height / 10,
         })
         .attachedTo(token.id)
         .layer(token.layer)
@@ -209,11 +270,11 @@ export const createAttachments = async (percentage: number, text: string, token:
         .height(height)
         .position({
             x: bounds.position.x + (bounds.width < 0 ? 0 : bounds.width) - shapeWidth / 1.5,
-            y: bounds.position.y + bounds.height - shapeHeight / 1.85 - height - bounds.height / 10,
+            y: bounds.position.y + bounds.height - shapeHeight * 1.2 - height - bounds.height / 10,
         })
         .attachedTo(token.id)
         .layer(token.layer)
-        .plainText(data.isPlayer ? String(data.armor.current) : String(data.evasion))
+        .plainText(String(data.armor.current))
         .locked(true)
         .textAlign("CENTER")
         .textAlignVertical("BOTTOM")
@@ -236,17 +297,31 @@ export const createAttachments = async (percentage: number, text: string, token:
     hopeText.metadata[infoMetadataKey] = { isHpText: true, attachmentType: "HOPE" };
     stressItem.metadata[infoMetadataKey] = { isHpText: true, attachmentType: "STRESS" };
     stressText.metadata[infoMetadataKey] = { isHpText: true, attachmentType: "STRESS" };
+    evasionItem.metadata[infoMetadataKey] = { isHpText: true, attachmentType: "EVASION" };
+    evasionText.metadata[infoMetadataKey] = { isHpText: true, attachmentType: "EVASION" };
     armorItem.metadata[infoMetadataKey] = { isHpText: true, attachmentType: "ARMOR" };
     armorText.metadata[infoMetadataKey] = { isHpText: true, attachmentType: "ARMOR" };
     if (data.isPlayer) {
-        return [backgroundShape, hpShape, textItem, hopeItem, hopeText, stressItem, stressText, armorItem, armorText];
+        return [
+            backgroundShape,
+            hpShape,
+            textItem,
+            hopeItem,
+            hopeText,
+            stressItem,
+            stressText,
+            evasionItem,
+            evasionText,
+            armorItem,
+            armorText,
+        ];
     } else {
-        return [backgroundShape, hpShape, textItem, stressItem, stressText, armorItem, armorText];
+        return [backgroundShape, hpShape, textItem, stressItem, stressText, evasionItem, evasionText];
     }
 };
 
 export const calculatePercentage = (current: number, max: number) => {
-    if (max === 0) {
+    if (max === 0 || current === 0 || isNaN(current) || isNaN(max) || current > max || max < 0 || current < 0) {
         return 0;
     }
     return current / max;
@@ -262,22 +337,12 @@ const handleBarAttachment = async (
     const bounds = await getImageBounds(character);
     const width = Math.abs(bounds.width);
     const border = Math.floor(width / 75);
-    const color = shape.style.fillColor;
 
     if (attachment.name === "hp" && infoMetadataKey in attachment.metadata) {
         const change = changeMap.get(attachment.id) ?? {};
         const hpPercentage = calculatePercentage(data.hp.current, data.hp.max);
-        if (hpPercentage === 0) {
-            if (color !== "black") {
-                change.color = "black";
-            }
-        } else {
-            if (color !== "red") {
-                change.color = "red";
-            }
-        }
         change.width = hpPercentage === 0 ? 0 : (width - border * 2) * hpPercentage;
-        if (shape.width !== change.width || (change.color && color !== change.color)) {
+        if (shape.width !== change.width) {
             return change;
         }
     }
@@ -357,11 +422,7 @@ export const updateAttachmentChanges = async (changes: Map<string, ItemChanges>)
                     if (changes.has(item.id)) {
                         const change = changes.get(item.id);
                         if (change) {
-                            if (change.color) {
-                                // @ts-ignore
-                                item.color = change.color;
-                            }
-                            if (change.width) {
+                            if (change.width || change.width === 0) {
                                 // @ts-ignore
                                 item.width = change.width;
                             }
