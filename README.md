@@ -10,7 +10,7 @@ The extension can be installed manually, by pasting the [manifest link](https://
 
 ## How it works
 
-See [USAGE.md](https://github.com/kamejosh/gm-daggerheart/USAGE.md)
+See [USAGE.md](https://github.com/kamejosh/gm-daggerheart/blob/master/USAGE.md)
 
 ## Building
 
