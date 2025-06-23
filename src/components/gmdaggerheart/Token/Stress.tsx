@@ -39,9 +39,11 @@ export const Stress = ({ id, hasOwnership }: { id: string; hasOwnership: boolean
                     <StressSvg
                         onClick={async () => {
                             if (hasOwnership) {
-                                const stress = Math.min(data.stress.current + 1, data.stress.max);
                                 const hp =
-                                    stress === data.stress.max ? Math.max(data.hp.current - 1, 0) : data.hp.current;
+                                    data.stress.current === data.stress.max
+                                        ? Math.max(data.hp.current - 1, 0)
+                                        : data.hp.current;
+                                const stress = Math.min(data.stress.current + 1, data.stress.max);
                                 await updateTokenMetadata(
                                     {
                                         ...data,
