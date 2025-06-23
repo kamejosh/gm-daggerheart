@@ -4,7 +4,7 @@
     "manifest_version": 1,
     "author": "Joshua Hercher",
     "description": "Daggerheart Stat Tracking and Battle Management",
-    "icon": "/GMG.svg",
+    "icon": "/GMD.svg",
     "homepage_url": "https://github.com/kamejosh/gm-daggerheart",
     "action": {
         "title": "GM's Daggerheart",

@@ -110,6 +110,21 @@ body:has(.popover-app) {
         .popover {
             height: 100%;
             overflow: hidden;
+
+            &.token {
+                row-gap: 1px;
+            }
+        }
+
+        .section {
+            &:has(.map) {
+                flex-direction: row;
+            }
+
+            .map {
+                padding: 2px;
+                height: 20px;
+            }
         }
     }
 }

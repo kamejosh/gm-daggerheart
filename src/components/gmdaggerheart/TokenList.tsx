@@ -4,6 +4,7 @@ import { itemMetadataKey } from "../../helper/variables.ts";
 import { GMDMetadata } from "../../helper/types.ts";
 import { Draggable } from "@hello-pangea/dnd";
 import { Token } from "./Token/Token.tsx";
+import { usePlayerContext } from "../../context/PlayerContext.ts";
 
 type TokenListProps = {
     tokens: Item[];
@@ -51,22 +52,35 @@ export const DraggableTokenList = React.memo(function DraggableTokenList(props: 
 });
 
 export const PlayerTokenList = (props: TokenListProps) => {
+    const playerContext = usePlayerContext();
     return (
         <div className={"player-token-list"}>
-            {props.tokens.map((token) => {
-                const data = token.metadata[itemMetadataKey] as GMDMetadata;
-                if (data) {
-                    return (
-                        <Token
-                            key={token.id}
-                            id={token.id}
-                            popover={false}
-                            selected={props.selected.includes(token.id)}
-                            tokenLists={props.tokenLists}
-                        />
-                    );
-                }
-            })}
+            {props.tokens
+                .sort((a, b) => {
+                    const aOwner = a.createdUserId === playerContext.id;
+                    const bOwner = b.createdUserId === playerContext.id;
+                    if (aOwner && !bOwner) {
+                        return -1;
+                    } else if (!aOwner && bOwner) {
+                        return 1;
+                    } else {
+                        return 0;
+                    }
+                })
+                .map((token) => {
+                    const data = token.metadata[itemMetadataKey] as GMDMetadata;
+                    if (data) {
+                        return (
+                            <Token
+                                key={token.id}
+                                id={token.id}
+                                popover={false}
+                                selected={props.selected.includes(token.id)}
+                                tokenLists={props.tokenLists}
+                            />
+                        );
+                    }
+                })}
         </div>
     );
 };

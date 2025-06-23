@@ -1,3 +1,3 @@
 # 1.0.0
 
-- release initial version
+- Initial version of GMD

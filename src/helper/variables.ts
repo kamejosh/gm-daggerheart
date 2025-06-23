@@ -12,7 +12,7 @@ export const diceTrayModalId = `${ID}/diceTrayModal`;
 export const rollLogPopoverId = `${ID}/dice-log`;
 export const rollMessageChannel = `${ID}.roll-event`;
 
-export const version = "1.0.0-beta";
+export const version = "1.0.0";
 
 export const changelogModal: Modal = {
     id: modalId,

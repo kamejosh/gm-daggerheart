@@ -135,12 +135,12 @@ const CustomDiceButton = (props: CustomDiceButtonProps) => {
             if (parsed) {
                 await rollWrapper(rollerApi, parsed.dice, {
                     operator: parsed.operator,
-                    label: "Roll: Custom",
+                    label: "Custom Roll",
                     whisper: hide ? await getUserUuid(room, rollerApi) : undefined,
                 });
             }
         } else if (props.customDice) {
-            await localRoll(props.customDice.dice, "Roll: Custom", addRoll, hide);
+            await localRoll(props.customDice.dice, "Custom Roll", addRoll, hide);
         }
         button.classList.remove("rolling");
         button.blur();

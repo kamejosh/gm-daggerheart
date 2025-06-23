@@ -39,7 +39,7 @@ export const Evasion = ({ id, hasOwnership }: { id: string; hasOwnership: boolea
                                 defaultValue={data.evasion}
                                 onBlur={async (e) => {
                                     const input = toNumber(e.target.value);
-                                    const evasion = Math.max(Math.min(input, 6), 0);
+                                    const evasion = Math.max(input, 0);
                                     e.target.value = String(evasion);
                                     await updateTokenMetadata({ ...data, evasion: evasion }, [id]);
                                 }}

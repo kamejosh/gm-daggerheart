@@ -96,7 +96,7 @@ const WeaponEntry = ({ weapon, id, edit, index }: { weapon: WeaponType; id: stri
 
     return (
         <>
-            <span>{label} </span>
+            <span>{label}</span>
             <div>
                 <DiceButton
                     dice={[{ notation: weapon.dice, label: label }]}

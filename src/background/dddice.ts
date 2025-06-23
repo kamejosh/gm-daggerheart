@@ -118,6 +118,7 @@ export const setupDddice = async () => {
     });
     // handle dice rolls from dddice
     window.addEventListener("message", async (event) => {
+        console.log(event);
         try {
             if (event.type === "message") {
                 if (event.data.type === "roll:finished") {
