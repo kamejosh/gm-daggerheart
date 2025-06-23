@@ -142,7 +142,8 @@ The Popover is Available for GMs and Players that own a token. It allows to quic
 
 GMD comes with an integrated dice-roller. It can be disabled (removed) by changing the [Disable Dice Roller Setting](#room-settings);
 
-![Dice Roller](https://raw.githubusercontent.com/kamejosh/gm-daggerheart/master/docs/dice_roller_log.png)
+![Dice Roller](https://raw.githubusercontent.com/kamejosh/gm-daggerheart/refs/heads/master/docs/dice-roller-log.png)
+
 
 ## Getting Started
 
@@ -158,7 +159,7 @@ The login process is the same with the official dddice extension (as this integr
 
 When the Roll Log is open there is a settings button on the top right side of the roll log.
 
-![Roll Settings](https://raw.githubusercontent.com/kamejosh/gm-daggerheart/master/docs/roll_settings.png)
+![Roll Settings](https://raw.githubusercontent.com/kamejosh/gm-daggerheart/refs/heads/master/docs/roll_settings.png)
 
 There are currently fve settings:
 
@@ -181,8 +182,6 @@ You can change the dddice room you want to use directly in this settings menu. J
 ### 3D Rendering
 
 You can choose to use the 3D rendering of dddice, this is the default option. This is a setting for each player. If someone uses a device that can't handle 3d dice rolls they can disable the rendering for better performance.
-
-![Dice Button Hover](https://raw.githubusercontent.com/kamejosh/owlbear-hp-tracker/master/docs/dice_button_hover.png)
 
 ADV and DIS are only available on d20s HIDE is available on all dice and CRIT is only available on Damage Dice.
 
