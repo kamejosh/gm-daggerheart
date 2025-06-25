@@ -45,7 +45,7 @@ export const Evasion = ({ id, hasOwnership }: { id: string; hasOwnership: boolea
                                 }}
                                 onKeyDown={async (e) => {
                                     if (e.key === "ArrowUp") {
-                                        const evasion = Math.min(data.evasion + 1, 6);
+                                        const evasion = data.evasion + 1;
                                         e.currentTarget.value = String(evasion);
                                         await updateTokenMetadata({ ...data, evasion: evasion }, [id]);
                                     } else if (e.key === "ArrowDown") {
@@ -54,7 +54,7 @@ export const Evasion = ({ id, hasOwnership }: { id: string; hasOwnership: boolea
                                         await updateTokenMetadata({ ...data, evasion: evasion }, [id]);
                                     } else if (e.key === "Enter") {
                                         const input = toNumber(e.currentTarget.value);
-                                        const evasion = Math.max(Math.min(input, 6), 0);
+                                        const evasion = Math.max(input, 0);
                                         e.currentTarget.value = String(evasion);
                                         await updateTokenMetadata({ ...data, evasion: evasion }, [id]);
                                     }
