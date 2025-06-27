@@ -1,0 +1,22 @@
+.wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+}
+
+.attackButton {
+    display: flex;
+    flex-direction: column;
+    width: 50px;
+
+    img,
+    svg {
+        width: 25px;
+        height: 25px;
+    }
+}
+
+.bonusInput {
+    width: 25px;
+}

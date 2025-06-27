@@ -542,9 +542,9 @@
             white-space: nowrap;
 
             &.dice-rendering {
-                margin-top: 1ch;
                 flex-direction: row;
                 align-items: center;
+                margin-top: 1ch;
                 .text {
                     .small {
                         font-size: 0.7rem;
@@ -553,10 +553,10 @@
             }
 
             &.dice-room-select {
-                margin-top: 1ch;
                 justify-content: space-between;
-                width: 100%;
                 gap: 0;
+                margin-top: 1ch;
+                width: 100%;
 
                 &:has(.room-loader) {
                     justify-content: flex-start;
@@ -685,6 +685,18 @@
 
                 .total {
                     font-size: 1.5rem;
+
+                    &.critical {
+                        color: #b55dff;
+                    }
+
+                    &.hope {
+                        color: #6cbf5b;
+                    }
+
+                    &.fear {
+                        color: #ff3b3b;
+                    }
                 }
 
                 .roll-context {
@@ -729,15 +741,18 @@
                     color: #df7b7b;
                 }
 
-                &.critical-damage, &.fear {
+                &.critical-damage,
+                &.fear {
                     color: #ff3b3b;
                 }
 
-                &.check, &.critical {
+                &.check,
+                &.critical {
                     color: #b55dff;
                 }
 
-                &.save, &.hope {
+                &.save,
+                &.hope {
                     color: #6cbf5b;
                 }
                 &.custom,
@@ -794,6 +809,18 @@
             justify-self: center;
             font-weight: bold;
             font-size: 3rem;
+
+            &.critical {
+                color: #b55dff;
+            }
+
+            &.hope {
+                color: #6cbf5b;
+            }
+
+            &.fear {
+                color: #ff3b3b;
+            }
         }
 
         .dice {

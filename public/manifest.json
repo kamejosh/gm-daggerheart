@@ -1,6 +1,6 @@
 {
     "name": "Game Master's Daggerheart",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "manifest_version": 1,
     "author": "Joshua Hercher",
     "description": "This extension allows to manage Daggerheart PC and NPC Tokens with integrated 3D dice roller and duality dice functionality",

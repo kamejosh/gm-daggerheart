@@ -4,6 +4,10 @@ Designed for Daggerheart this extension allows tracking and changing Players and
 
 ![gmd example](https://raw.githubusercontent.com/kamejosh/gm-daggerheart/refs/heads/master/docs/GameMastersDaggerheart.png)
 
+# Tutorial
+
+To quickly checkout the most common features of GMD you can watch this [Video Tutorial](https://www.youtube.com/watch?v=_Ag5A32VBEc).
+
 # How it works
 
 The extension has two main windows:

@@ -1,6 +1,6 @@
 import { DiceButton } from "./DiceButtonWrapper.tsx";
 import { RollLogEntryType, useRollLogContext } from "../../../context/RollLogContext.tsx";
-import { useCallback, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { useInterval } from "../../../helper/hooks.ts";
 import { usePlayerContext } from "../../../context/PlayerContext.ts";
 import { isObject } from "lodash";
@@ -120,6 +120,16 @@ export const RollLogEntry = (props: RollLogEntryProps) => {
         }
     }, [props.entry.label]);
 
+    const formatClass = useMemo(() => {
+        if (props.entry.label) {
+            const parts = props.entry.label.split(":");
+            if (parts.length === 2) {
+                return parts[1].trim().toLowerCase().replace(" ", "-");
+            }
+        }
+        return "";
+    }, [props.entry.label]);
+
     const detail = getDetailedResult();
 
     return (
@@ -131,7 +141,7 @@ export const RollLogEntry = (props: RollLogEntryProps) => {
                 <DiceButton
                     dice={[{ notation: props.entry.equation, label: props.entry.label || "re-roll" }]}
                     text={props.entry.equation}
-                    label={props.entry.label || "re-roll"}
+                    label={formatClass === "" ? props.entry.label || "re-roll" : "re-roll"}
                     character={props.entry.username}
                 />
             ) : null}
@@ -141,7 +151,7 @@ export const RollLogEntry = (props: RollLogEntryProps) => {
             </Tippy>
 
             {detail.length > 0 || props.entry.total_value.length > 0 ? <div className={"divider"}>=</div> : null}
-            <div className={"total"}>{hidden ? "?" : String(props.entry.total_value)}</div>
+            <div className={`total ${formatClass}`}>{hidden ? "?" : String(props.entry.total_value)}</div>
             {props.entry.is_hidden && ownRoll ? (
                 <button
                     className={"hide-toggle"}

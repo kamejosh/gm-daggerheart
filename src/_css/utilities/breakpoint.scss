@@ -1,6 +1,7 @@
 $mobile: 380px;
 $tablet: 470px;
 $laptop: 560px;
+$big: 650px;
 
 @mixin min-width($width) {
     @media (min-width: $width) {
@@ -22,6 +23,12 @@ $laptop: 560px;
 
 @mixin laptop() {
     @include min-width($laptop) {
+        @content;
+    }
+}
+
+@mixin big() {
+    @include min-width($big) {
         @content;
     }
 }

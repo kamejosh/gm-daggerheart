@@ -15,11 +15,11 @@
     min-height: 46px;
     scroll-margin: 100px;
 
-    @include breakpoint.tablet {
-        display: grid;
-        grid-template-rows: repeat(3, auto);
-        grid-template-columns: repeat(4, auto);
-    }
+    //@include breakpoint.tablet {
+    //    display: grid;
+    //    grid-template-rows: repeat(3, auto);
+    //    grid-template-columns: repeat(4, auto);
+    //}
 
     @include breakpoint.laptop {
         grid-template-rows: 2fr;

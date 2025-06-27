@@ -21,6 +21,8 @@ import { Weapons } from "./Weapons.tsx";
 import { MapSvg } from "../../svgs/MapSvg.tsx";
 import { updateTokenMetadata } from "../../../helper/tokenHelper.ts";
 import Tippy from "@tippyjs/react";
+import { Attack } from "./Attack.tsx";
+import { getTokenName } from "../../../helper/helpers.ts";
 
 type TokenProps = {
     id: string;
@@ -207,7 +209,11 @@ export const Token = (props: TokenProps) => {
                         </button>
                     </Tippy>
                 </div>
-            ) : null}
+            ) : (
+                <div className={`section`}>
+                    <Attack id={props.id} character={getTokenName(item)} />
+                </div>
+            )}
             {component !== "popover" && hasOwnership && playerContext.role === "PLAYER" ? (
                 <>
                     <Weapons id={props.id} />
