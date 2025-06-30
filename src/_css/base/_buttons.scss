@@ -270,6 +270,10 @@ button,
                 --hover-color: rgba(255, 0, 0, 0.6);
             }
 
+            &.reaction {
+                --hover-color: rgba(50, 150, 255, 0.6);
+            }
+
             &.crit {
                 --hover-color: rgba(150, 0, 255, 1);
             }

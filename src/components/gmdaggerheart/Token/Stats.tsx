@@ -3,7 +3,7 @@ import { useDiceRoller } from "../../../context/DDDiceContext.tsx";
 import { useShallow } from "zustand/react/shallow";
 import { Image } from "@owlbear-rodeo/sdk";
 import { getTokenName, updateRoomMetadata } from "../../../helper/helpers.ts";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { autoPlacement, safePolygon, useFloating, useHover, useInteractions } from "@floating-ui/react";
 import { useMetadataContext } from "../../../context/MetadataContext.ts";
 import { IDiceRoll, Operator, parseRollEquation } from "dddice-js";
@@ -42,6 +42,12 @@ export const Stat = ({
     const [rolling, setRolling] = useState<boolean>(false);
     const [isOpen, setIsOpen] = useState<boolean>(false);
 
+    useEffect(() => {
+        if (!edit && debounceValue !== value.toString()) {
+            setValue(toNumber(debounceValue));
+        }
+    }, [edit]);
+
     const isEnabled = useMemo(() => {
         return (initialized && !room?.disableDiceRoller) || room?.disableDiceRoller;
     }, [initialized, room?.disableDiceRoller]);
@@ -62,7 +68,7 @@ export const Stat = ({
 
     const { getReferenceProps, getFloatingProps } = useInteractions([hover]);
 
-    const roll = async (modifier?: "ADV" | "DIS" | "SELF") => {
+    const roll = async (modifier?: "ADV" | "DIS" | "SELF" | "REACT") => {
         let parsedDice: Array<{
             dice: IDiceRoll[];
             operator: Operator | undefined;
@@ -102,20 +108,26 @@ export const Stat = ({
                     if (rollResult) {
                         if (rollResult.values[0].value > rollResult.values[1].value) {
                             rollResult.label += ": Hope";
-                            await updateTokenMetadata({ ...data, hope: Math.min(data.hope + 1, 6) }, [id]);
+                            if (modifier !== "REACT") {
+                                await updateTokenMetadata({ ...data, hope: Math.min(data.hope + 1, 6) }, [id]);
+                            }
                         } else if (rollResult.values[0].value < rollResult.values[1].value) {
                             rollResult.label += ": Fear";
-                            await updateRoomMetadata(room, { fear: room?.fear ? Math.min(room?.fear + 1, 12) : 1 });
+                            if (modifier !== "REACT") {
+                                await updateRoomMetadata(room, { fear: room?.fear ? Math.min(room?.fear + 1, 12) : 1 });
+                            }
                         } else {
                             rollResult.label += ": Critical";
-                            await updateTokenMetadata(
-                                {
-                                    ...data,
-                                    hope: Math.min(data.hope + 1, 6),
-                                    stress: { ...data.stress, current: Math.max(data.stress.current - 1, 0) },
-                                },
-                                [id],
-                            );
+                            if (modifier !== "REACT") {
+                                await updateTokenMetadata(
+                                    {
+                                        ...data,
+                                        hope: Math.min(data.hope + 1, 6),
+                                        stress: { ...data.stress, current: Math.max(data.stress.current - 1, 0) },
+                                    },
+                                    [id],
+                                );
+                            }
                         }
                         await rollerCallback(rollResult, addRoll);
                     }
@@ -138,19 +150,21 @@ export const Stat = ({
 
             // @ts-ignore
             const rolls: Array<{ value: number }> = result?.rolls[0].rolls;
-            if (rolls && rolls[0].value < rolls[1].value) {
-                await updateRoomMetadata(room, { fear: room?.fear ? Math.min(room?.fear + 1, 12) : 1 });
-            } else if (rolls && rolls[0].value > rolls[1].value) {
-                await updateTokenMetadata({ ...data, hope: Math.min(data.hope + 1, 6) }, [id]);
-            } else {
-                await updateTokenMetadata(
-                    {
-                        ...data,
-                        hope: Math.min(data.hope + 1, 6),
-                        stress: { ...data.stress, current: Math.max(data.stress.current - 1, 0) },
-                    },
-                    [id],
-                );
+            if (modifier !== "REACT") {
+                if (rolls && rolls[0].value < rolls[1].value) {
+                    await updateRoomMetadata(room, { fear: room?.fear ? Math.min(room?.fear + 1, 12) : 1 });
+                } else if (rolls && rolls[0].value > rolls[1].value) {
+                    await updateTokenMetadata({ ...data, hope: Math.min(data.hope + 1, 6) }, [id]);
+                } else {
+                    await updateTokenMetadata(
+                        {
+                            ...data,
+                            hope: Math.min(data.hope + 1, 6),
+                            stress: { ...data.stress, current: Math.max(data.stress.current - 1, 0) },
+                        },
+                        [id],
+                    );
+                }
             }
         }
     };
@@ -210,7 +224,17 @@ export const Stat = ({
                     >
                         DIS
                     </button>
-
+                    <Tippy content={"Reactions do not change hope/stress/fear"}>
+                        <button
+                            className={"reaction"}
+                            disabled={!isEnabled}
+                            onClick={async () => {
+                                await roll("REACT");
+                            }}
+                        >
+                            REACT
+                        </button>
+                    </Tippy>
                     <button
                         className={"self"}
                         disabled={!isEnabled}
