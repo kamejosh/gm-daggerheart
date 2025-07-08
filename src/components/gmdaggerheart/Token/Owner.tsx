@@ -56,6 +56,8 @@ export const Owner = (props: { id: string }) => {
                                 items.forEach((item) => {
                                     if (e.target.value !== "PC") {
                                         item.createdUserId = value;
+                                    } else if (playerContext.id) {
+                                        item.createdUserId = playerContext.id;
                                     }
                                     item.metadata[itemMetadataKey] = newData;
                                 });
