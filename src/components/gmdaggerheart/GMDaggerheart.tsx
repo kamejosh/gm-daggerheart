@@ -7,7 +7,7 @@ import { GMDMetadata } from "../../helper/types.ts";
 import { PlayerTokenList } from "./TokenList.tsx";
 import { SceneReadyContext } from "../../context/SceneReadyContext.ts";
 import { DropGroup } from "./DropGroup.tsx";
-import { reorderMetadataIndex, sortItems } from "../../helper/helpers.ts";
+import { reorderMetadataIndex, sortItems, updateSceneMetadata } from "../../helper/helpers.ts";
 import { compare } from "compare-versions";
 import { Helpbuttons } from "../general/Helpbuttons/Helpbuttons.tsx";
 import { DiceTray } from "../general/DiceRoller/DiceTray.tsx";
@@ -57,6 +57,9 @@ const Content = () => {
             } else if (playerContext.role === "GM" && scene?.version && compare(scene.version, version, "<")) {
                 setIgnoredChanges(true);
                 await OBR.notification.show(`GM's Daggerheart has been updated to version ${version}`, "SUCCESS");
+            }
+            if (scene?.version && compare(scene.version, version, "!=")) {
+                await updateSceneMetadata(scene, { version: version });
             }
         };
 

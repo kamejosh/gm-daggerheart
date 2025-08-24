@@ -727,6 +727,7 @@
             overflow: hidden;
             font-weight: bolder;
             text-overflow: ellipsis;
+            white-space: wrap;
 
             .label-detail {
                 text-transform: capitalize;
@@ -735,10 +736,6 @@
                 &.attack,
                 &.cast {
                     color: #1b9af0;
-                }
-
-                &.damage {
-                    color: #df7b7b;
                 }
 
                 &.critical-damage,
@@ -756,6 +753,7 @@
                     color: #6cbf5b;
                 }
                 &.custom,
+                &.damage,
                 &.roll {
                     color: #f5a623;
                 }
@@ -809,6 +807,18 @@
             justify-self: center;
             font-weight: bold;
             font-size: 3rem;
+
+            &.to-hit,
+            &.attack,
+            &.cast {
+                color: #1b9af0;
+            }
+
+            &.custom,
+            &.damage,
+            &.roll {
+                color: #f5a623;
+            }
 
             &.critical {
                 color: #b55dff;

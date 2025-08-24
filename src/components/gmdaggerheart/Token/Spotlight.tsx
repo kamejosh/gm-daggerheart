@@ -30,7 +30,7 @@ export const Spotlight = ({ id, hasOwnership }: { id: string; hasOwnership: bool
                     <SpotlightSvg
                         onClick={async () => {
                             if (hasOwnership) {
-                                const spotlight = Math.min(data.spotlight + 1, 6);
+                                const spotlight = data.spotlight + 1;
                                 await updateTokenMetadata({ ...data, spotlight: spotlight }, [id]);
                             }
                         }}
@@ -54,13 +54,13 @@ export const Spotlight = ({ id, hasOwnership }: { id: string; hasOwnership: bool
                                 defaultValue={data.spotlight}
                                 onBlur={async (e) => {
                                     const input = toNumber(e.target.value);
-                                    const spotlight = Math.max(Math.min(input, 6), 0);
+                                    const spotlight = Math.max(input, 0);
                                     e.target.value = String(spotlight);
                                     await updateTokenMetadata({ ...data, spotlight: spotlight }, [id]);
                                 }}
                                 onKeyDown={async (e) => {
                                     if (e.key === "ArrowUp") {
-                                        const spotlight = Math.min(data.spotlight + 1, 6);
+                                        const spotlight = data.spotlight + 1;
                                         e.currentTarget.value = String(spotlight);
                                         await updateTokenMetadata({ ...data, spotlight: spotlight }, [id]);
                                     } else if (e.key === "ArrowDown") {
@@ -69,7 +69,7 @@ export const Spotlight = ({ id, hasOwnership }: { id: string; hasOwnership: bool
                                         await updateTokenMetadata({ ...data, spotlight: spotlight }, [id]);
                                     } else if (e.key === "Enter") {
                                         const input = toNumber(e.currentTarget.value);
-                                        const spotlight = Math.max(Math.min(input, 6), 0);
+                                        const spotlight = Math.max(input, 0);
                                         e.currentTarget.value = String(spotlight);
                                         await updateTokenMetadata({ ...data, spotlight: spotlight }, [id]);
                                     }

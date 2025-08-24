@@ -6,7 +6,6 @@ image: https://raw.githubusercontent.com/kamejosh/gm-daggerheart/refs/heads/mast
 icon: https://raw.githubusercontent.com/kamejosh/gm-daggerheart/refs/heads/master/public/GMD.svg
 tags:
   - combat
-  - tool
   - automation
   - dice
 manifest: https://gmd.tabletop-almanac.com/manifest.json

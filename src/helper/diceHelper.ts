@@ -1,4 +1,4 @@
-import { RoomMetadata } from "./types.ts";
+import { GMDMetadata, RoomMetadata } from "./types.ts";
 import { dddiceRollToRollLog, updateRoomMetadata } from "./helpers.ts";
 import OBR, { Metadata } from "@owlbear-rodeo/sdk";
 import {
@@ -22,6 +22,7 @@ import { DiceRoll } from "@dice-roller/rpg-dice-roller";
 import { v4 } from "uuid";
 import { diceRollerStore } from "../context/DDDiceContext.tsx";
 import { CustomDieNotation, diceButtonsStore } from "../context/DiceButtonContext.tsx";
+import { updateTokenMetadata } from "./tokenHelper.ts";
 
 let rollLogTimeOut: number;
 
@@ -468,5 +469,119 @@ export const getUserUuid = async (room: RoomMetadata | null, rollerApi?: ThreeDD
 export const blastMessage = (message: object) => {
     for (let i = 0; i < window.parent.frames.length; i++) {
         window.parent.frames[i].postMessage(message, "*");
+    }
+};
+
+export const rollDualityDice = async (
+    value: number,
+    label: string,
+    external_id: string,
+    data: GMDMetadata,
+    id: string,
+    addRoll: (entry: RollLogEntryType) => void,
+    room: RoomMetadata | null,
+    hopeTheme: ITheme | null,
+    fearTheme: ITheme | null,
+    theme: ITheme | null,
+    rollerApi: ThreeDDiceAPI | null,
+    modifier?: "ADV" | "DIS" | "SELF" | "REACT",
+) => {
+    let parsedDice: Array<{
+        dice: IDiceRoll[];
+        operator: Operator | undefined;
+    }> = [];
+
+    if (!room?.disableDiceRoller) {
+        parsedDice.push(parseRollEquation("1d12", hopeTheme ? hopeTheme.id : theme?.id || "dddice-bees"));
+        parsedDice.push(parseRollEquation("1d12", fearTheme ? fearTheme.id : theme?.id || "dddice-bees"));
+
+        const parsed: {
+            dice: IDiceRoll[];
+            operator: Operator | undefined;
+        } = { dice: [], operator: undefined };
+        parsedDice.forEach((p) => {
+            parsed.dice.push(...p.dice);
+        });
+
+        if (modifier === "ADV") {
+            parsed.dice.push({ type: "d6", theme: theme?.id || "dddice-bees" });
+        } else if (modifier === "DIS") {
+            parsed.dice.push({ type: "d6", theme: theme?.id || "dddice-bees" });
+            parsed.operator = { "*": { "-1": [2] } };
+        }
+
+        if (value !== 0) {
+            parsed.dice.push({ type: "mod", value: value });
+        }
+
+        if (rollerApi) {
+            try {
+                let rollResult = await rollWrapper(rollerApi, parsed.dice, {
+                    label: label,
+                    operator: parsed.operator,
+                    external_id: external_id,
+                    whisper: modifier === "SELF" ? await getUserUuid(room, rollerApi) : undefined,
+                });
+                if (rollResult) {
+                    if (rollResult.values[0].value > rollResult.values[1].value) {
+                        rollResult.label += ": Hope";
+                        if (modifier !== "REACT") {
+                            await updateTokenMetadata({ ...data, hope: Math.min(data.hope + 1, 6) }, [id]);
+                        }
+                    } else if (rollResult.values[0].value < rollResult.values[1].value) {
+                        rollResult.label += ": Fear";
+                        if (modifier !== "REACT") {
+                            await updateRoomMetadata(room, { fear: room?.fear ? Math.min(room?.fear + 1, 12) : 1 });
+                        }
+                    } else {
+                        rollResult.label += ": Critical";
+                        if (modifier !== "REACT") {
+                            await updateTokenMetadata(
+                                {
+                                    ...data,
+                                    hope: Math.min(data.hope + 1, 6),
+                                    stress: { ...data.stress, current: Math.max(data.stress.current - 1, 0) },
+                                },
+                                [id],
+                            );
+                        }
+                    }
+                    await rollerCallback(rollResult, addRoll);
+                }
+            } catch {
+                console.warn("error in dice roll", parsed.dice, parsed.operator);
+            }
+        }
+    } else {
+        let notation = "2d12";
+        if (modifier === "ADV") {
+            notation += "+1d6";
+        } else if (modifier === "DIS") {
+            notation += "-1d6";
+        }
+        if (value !== 0) {
+            notation += `+ ${value}`;
+        }
+
+        const result = await localRoll(notation, label, addRoll, modifier === "SELF", external_id, true);
+
+        // @ts-ignore
+        const rolls: Array<{ value: number }> = result?.rolls[0].rolls;
+        if (modifier !== "REACT") {
+            if (rolls && rolls[0].value < rolls[1].value) {
+                await updateRoomMetadata(room, { fear: room?.fear ? Math.min(room?.fear + 1, 12) : 1 });
+            } else if (rolls && rolls[0].value > rolls[1].value) {
+                await updateTokenMetadata({ ...data, hope: Math.min(data.hope + 1, 6) }, [id]);
+            } else {
+                await updateTokenMetadata(
+                    {
+                        ...data,
+                        hope: Math.min(data.hope + 1, 6),
+                        stress: { ...data.stress, current: Math.max(data.stress.current - 1, 0) },
+                    },
+                    [id],
+                );
+            }
+        }
     }
 };

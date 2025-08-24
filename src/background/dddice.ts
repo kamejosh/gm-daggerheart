@@ -118,7 +118,6 @@ export const setupDddice = async () => {
     });
     // handle dice rolls from dddice
     window.addEventListener("message", async (event) => {
-        console.log(event);
         try {
             if (event.type === "message") {
                 if (event.data.type === "roll:finished") {
@@ -137,7 +136,7 @@ export const setupDddice = async () => {
 };
 
 const updateRollLabel = (roll: IRoll): string => {
-    const dualities = ["Roll Duality", "Agility", "Strength", "Finesse", "Instinct", "Presence", "Knowledge"];
+    const dualities = ["Roll Duality", "Agility", "Strength", "Finesse", "Instinct", "Presence", "Knowledge", "Attack"];
     if (roll.label && dualities.includes(roll.label)) {
         if (roll.values[0].value > roll.values[1].value) {
             roll.label += ": Hope";
@@ -146,6 +145,8 @@ const updateRollLabel = (roll: IRoll): string => {
         } else {
             roll.label += ": Critical";
         }
+        return roll.label;
+    } else if (roll.label) {
         return roll.label;
     }
     return "";

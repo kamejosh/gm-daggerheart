@@ -209,12 +209,12 @@ export const Token = (props: TokenProps) => {
                         </button>
                     </Tippy>
                 </div>
-            ) : (
+            ) : hasOwnership ? (
                 <div className={`section`}>
                     <Attack id={props.id} character={getTokenName(item)} />
                 </div>
-            )}
-            {component !== "popover" && hasOwnership && playerContext.role === "PLAYER" ? (
+            ) : null}
+            {component !== "popover" && hasOwnership && data.isPlayer ? (
                 <>
                     <Weapons id={props.id} />
                 </>

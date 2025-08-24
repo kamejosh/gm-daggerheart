@@ -100,7 +100,7 @@ const WeaponEntry = ({ weapon, id, edit, index }: { weapon: WeaponType; id: stri
             <div>
                 <DiceButton
                     dice={[{ notation: weapon.dice, label: label }]}
-                    label={label}
+                    label={`${label}: Damage`}
                     text={weapon.dice}
                     character={getTokenName(item)}
                 />

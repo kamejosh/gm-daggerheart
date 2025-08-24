@@ -59,7 +59,6 @@ const initScene = async () => {
         ownMetadata[metadataKey] = sceneData;
     } else {
         const sceneData = metadata[metadataKey] as SceneMetadata;
-        sceneData.version = version;
 
         if (!sceneData.id) {
             sceneData.id = uuidv4();

@@ -1,3 +1,18 @@
+# 1.0.2
+
+- Fix error that roll label don't show up for others
+- Fix error that spotlight couldn't go above 6
+- Add colors to all kind of rolls (e.g. damage)
+- Allow Attack Roll button to be used as a reaction
+  - This enables players to quickly roll duality dice with a modifier and no automatic change to fear/hope/stress
+  
+This version also includes older updates:
+
+- Fix players can no longer manually change fear
+- Add reactions to stats
+- Fix input is no saved when tapping out of stat input
+- Fix When settings a Token to be a GM controlled PC it could no longer be assigned to a player
+
 # 1.0.1
 
 - Fix stress reduces HP to early
