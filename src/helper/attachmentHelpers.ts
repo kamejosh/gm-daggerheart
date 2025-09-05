@@ -57,7 +57,7 @@ export const createAttachments = async (percentage: number, text: string, token:
         .width(width + overflow)
         .height(height)
         .position({
-            x: bounds.width < 0 ? bounds.position.x - width + overflow / 2 : bounds.position.x - overflow / 2,
+            x: bounds.width < 0 ? bounds.position.x + bounds.width - overflow / 2 : bounds.position.x - overflow / 2,
             y: bounds.position.y + bounds.height - height - bounds.height / 10,
         })
         .attachedTo(token.id)
