@@ -9,6 +9,9 @@
     }
 
     option {
-        color: revert;
+        background-color: var(--bg-color);
+        &:hover {
+            background-color: var(--bg-color-light);
+        }
     }
 }
