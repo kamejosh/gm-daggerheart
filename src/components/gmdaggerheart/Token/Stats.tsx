@@ -14,6 +14,7 @@ import { updateTokenMetadata } from "../../../helper/tokenHelper.ts";
 import { toNumber } from "lodash";
 import { useTokenListContext } from "../../../context/TokenContext.tsx";
 import Tippy from "@tippyjs/react";
+import { useComponentContext } from "../../../context/ComponentContext.tsx";
 
 export const Stat = ({
     value,
@@ -30,6 +31,7 @@ export const Stat = ({
     setValue: (value: number) => void;
     id: string;
 }) => {
+    const { component } = useComponentContext();
     const [theme, hopeTheme, fearTheme, initialized, rollerApi] = useDiceRoller(
         useShallow((state) => [state.theme, state.hopeTheme, state.fearTheme, state.initialized, state.rollerApi]),
     );
@@ -48,7 +50,7 @@ export const Stat = ({
     }, [edit]);
 
     const isEnabled = useMemo(() => {
-        return (initialized && !room?.disableDiceRoller) || room?.disableDiceRoller;
+        return component === "popover" || (initialized && !room?.disableDiceRoller) || room?.disableDiceRoller;
     }, [initialized, room?.disableDiceRoller]);
 
     const { refs, floatingStyles, context } = useFloating({
@@ -101,7 +103,7 @@ export const Stat = ({
                             hopeTheme,
                             fearTheme,
                             theme,
-                            rollerApi,
+                            component !== "popover" ? rollerApi : null,
                         );
                         setRolling(false);
                     }}

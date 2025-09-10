@@ -209,7 +209,7 @@ export const Token = (props: TokenProps) => {
                         </button>
                     </Tippy>
                 </div>
-            ) : hasOwnership ? (
+            ) : hasOwnership && component !== "popover" ? (
                 <div className={`section`}>
                     <Attack id={props.id} character={getTokenName(item)} />
                 </div>
