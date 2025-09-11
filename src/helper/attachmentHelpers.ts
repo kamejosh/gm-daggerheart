@@ -382,6 +382,11 @@ export const saveOrChangeAttachments = async (
                 if ((a as Text).text.plainText !== newText) {
                     change.text = newText;
                 }
+            } else if (a.name === "evasion-text") {
+                const newText = String(data.evasion);
+                if ((a as Text).text.plainText !== newText) {
+                    change.text = newText;
+                }
             } else if (a.name === "hp") {
                 change = await handleBarAttachment(a, token as Image, changes, data);
             }
