@@ -5,7 +5,11 @@ import { v4 as uuidv4 } from "uuid";
 import { getAttachedItems, initToken } from "../helper/helpers.ts";
 import { setupDddice } from "./dddice.ts";
 import { updateItems } from "../helper/obrHelper.ts";
-import { saveOrChangeAttachments, updateAttachmentChanges } from "../helper/attachmentHelpers.ts";
+import {
+    saveOrChangeAttachments,
+    updateAttachmentChanges,
+    updateAttachmentVisibility,
+} from "../helper/attachmentHelpers.ts";
 import { isNull, isUndefined } from "lodash";
 import { setupDicePlus } from "./diceplus.ts";
 
@@ -250,6 +254,16 @@ const sceneReady = async () => {
     }
 };
 
+const initTokens = async () => {
+    // Triggers everytime any item is changed
+    OBR.scene.items.onChange(async (items) => {
+        const tokens = items.filter((item) => {
+            return itemMetadataKey in item.metadata && (item.metadata[itemMetadataKey] as GMDMetadata).active;
+        });
+        await updateAttachmentVisibility(tokens);
+    });
+};
+
 const initMessageBus = async () => {};
 
 OBR.onReady(async () => {
@@ -281,6 +295,11 @@ OBR.onReady(async () => {
         const isReady = await OBR.scene.isReady();
         if (isReady) {
             await sceneReady();
+        }
+        try {
+            await initTokens();
+        } catch (e) {
+            console.warn("GM's Daggerheart - error while initializing Token event handler", e);
         }
     }
     try {

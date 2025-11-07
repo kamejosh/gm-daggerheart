@@ -1,7 +1,7 @@
 import { buildCurve, buildShape, buildText, Image, Item, Shape, Text } from "@owlbear-rodeo/sdk";
 import { GMDMetadata, ItemChanges } from "./types.ts";
 import { deleteAttachments, getAttachedItems, getImageBounds } from "./helpers.ts";
-import { infoMetadataKey } from "./variables.ts";
+import { infoMetadataKey, itemMetadataKey } from "./variables.ts";
 import { addItems, updateItems } from "./obrHelper.ts";
 
 export const createAttachments = async (percentage: number, text: string, token: Image, data: GMDMetadata) => {
@@ -392,6 +392,8 @@ export const saveOrChangeAttachments = async (
             }
             if (token.visible && data.isPlayer != a.visible) {
                 change.visible = token.visible && data.isPlayer;
+            } else if (token.visible && !data.isPlayer && a.visible) {
+                change.visible = false;
             }
             changes.set(a.id, change);
         }
@@ -406,7 +408,23 @@ export const saveOrChangeAttachments = async (
     }
 };
 
-// @ts-ignore
+export const updateAttachmentVisibility = async (tokens: Array<Item>) => {
+    const changes = new Map<string, ItemChanges>();
+    for (const token of tokens) {
+        const attachments = await getAttachedItems(token.id, []);
+        const data = token.metadata[itemMetadataKey] as GMDMetadata;
+
+        attachments.forEach((item) => {
+            const change = changes.get(item.id) ?? {};
+            if (item.visible != (token.visible && data.isPlayer)) {
+                change.visible = token.visible && data.isPlayer;
+                changes.set(item.id, change);
+            }
+        });
+    }
+    await updateAttachmentChanges(changes);
+};
+
 export const updateAttachments = async (item: Item, data: GMDMetadata) => {
     const attachments = await getAttachedItems(item.id, []);
     const attachmentChanges = new Map<string, ItemChanges>();
