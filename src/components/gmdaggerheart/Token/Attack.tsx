@@ -3,7 +3,7 @@ import { useDiceRoller } from "../../../context/DDDiceContext.tsx";
 import { useShallow } from "zustand/react/shallow";
 import { useMemo, useState } from "react";
 import { useTokenListContext } from "../../../context/TokenContext.tsx";
-import { GMDMetadata } from "../../../helper/types.ts";
+import { DICE_ROLLER, GMDMetadata } from "../../../helper/types.ts";
 import { useRollLogContext } from "../../../context/RollLogContext.tsx";
 import { useMetadataContext } from "../../../context/MetadataContext.ts";
 import { autoPlacement, safePolygon, useFloating, useHover, useInteractions } from "@floating-ui/react";
@@ -27,8 +27,8 @@ export const Attack = ({ id, character }: { id: string; character: string }) => 
     const [debounceValue, setDebounceValue] = useState<string>(bonus.toString());
 
     const isEnabled = useMemo(() => {
-        return (initialized && !room?.disableDiceRoller) || room?.disableDiceRoller;
-    }, [initialized, room?.disableDiceRoller]);
+        return (initialized && room?.diceRoller === DICE_ROLLER.DDDICE) || room?.diceRoller !== DICE_ROLLER.DDDICE;
+    }, [initialized, room?.diceRoller]);
 
     const { refs, floatingStyles, context } = useFloating({
         open: isOpen,

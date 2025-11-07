@@ -1,11 +1,13 @@
 import OBR, { Metadata } from "@owlbear-rodeo/sdk";
 import { ID, itemMetadataKey, metadataKey, version } from "../helper/variables.ts";
-import { ItemChanges, GMDMetadata, RoomMetadata, SceneMetadata } from "../helper/types.ts";
+import { DICE_ROLLER, GMDMetadata, ItemChanges, RoomMetadata, SceneMetadata } from "../helper/types.ts";
 import { v4 as uuidv4 } from "uuid";
 import { getAttachedItems, initToken } from "../helper/helpers.ts";
 import { setupDddice } from "./dddice.ts";
 import { updateItems } from "../helper/obrHelper.ts";
 import { saveOrChangeAttachments, updateAttachmentChanges } from "../helper/attachmentHelpers.ts";
+import { isNull, isUndefined } from "lodash";
+import { setupDicePlus } from "./diceplus.ts";
 
 /**
  * All character items get the default values for the HpTrackeMetadata.
@@ -37,10 +39,19 @@ const initRoom = async () => {
     if (!(metadataKey in metadata)) {
         const roomData: RoomMetadata = {
             ignoreUpdateNotification: false,
-            disableDiceRoller: false,
+            diceRoller: DICE_ROLLER.DDDICE,
             fear: 0,
         };
         ownMetadata[metadataKey] = roomData;
+    } else {
+        const roomData = metadata[metadataKey] as RoomMetadata;
+        if (isNull(roomData.diceRoller) || isUndefined(roomData.diceRoller)) {
+            // @ts-ignore disableDiceRoller is the legacy option
+            if (roomData.disableDiceRoller) {
+                roomData.diceRoller = DICE_ROLLER.SIMPLE;
+            }
+            roomData.diceRoller = DICE_ROLLER.DDDICE;
+        }
     }
     await OBR.room.setMetadata(ownMetadata);
 };
@@ -274,6 +285,7 @@ OBR.onReady(async () => {
     }
     try {
         await setupDddice();
+        await setupDicePlus();
     } catch (e) {
         await OBR.notification.show(
             "GM's Daggerheart dice roller initialization error. Check browser logs for more info.",

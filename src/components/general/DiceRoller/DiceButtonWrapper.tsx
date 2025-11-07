@@ -1,7 +1,14 @@
 import { useDiceRoller } from "../../../context/DDDiceContext.tsx";
 import { useMetadataContext } from "../../../context/MetadataContext.ts";
 import { useCallback, useState } from "react";
-import { diceToRoll, getUserUuid, localRoll, rollerCallback, rollWrapper } from "../../../helper/diceHelper.ts";
+import {
+    dicePlusRoll,
+    diceToRoll,
+    getUserUuid,
+    localRoll,
+    rollerCallback,
+    rollWrapper,
+} from "../../../helper/diceHelper.ts";
 import { useRollLogContext } from "../../../context/RollLogContext.tsx";
 import { IRoll, ITheme, parseRollEquation } from "dddice-js";
 import { getDiceImage, getSvgForDiceType } from "../../../helper/previewHelpers.tsx";
@@ -11,13 +18,15 @@ import { useShallow } from "zustand/react/shallow";
 import "./dice-button-wrapper.scss";
 import { DiceRoll } from "@dice-roller/rpg-dice-roller";
 import { autoPlacement, useFloating } from "@floating-ui/react";
+import { DICE_ROLLER } from "../../../helper/types.ts";
+import { DicePlusRollResultData } from "../../../background/diceplus.ts";
 
 type DiceButtonProps = {
     dice: Array<{ notation: string; label: string; theme?: ITheme | null }>;
     text: string;
     label: string;
     character?: string;
-    onRoll?: (rollResult?: Array<IRoll | DiceRoll | null>) => void;
+    onRoll?: (rollResult?: IRoll | DiceRoll | DicePlusRollResultData | null) => void;
     classes?: string;
 };
 export const DiceButton = (props: DiceButtonProps) => {
@@ -48,7 +57,7 @@ export const DiceButton = (props: DiceButtonProps) => {
             let modifiedDice = props.dice[0].notation;
 
             let rollResult = null;
-            if (theme && !room?.disableDiceRoller) {
+            if (theme && room?.diceRoller === DICE_ROLLER.DDDICE) {
                 const parsed = diceToRoll(modifiedDice, theme.id);
                 if (parsed && rollerApi) {
                     try {
@@ -64,11 +73,13 @@ export const DiceButton = (props: DiceButtonProps) => {
                         console.warn("error in dice roll", parsed.dice, parsed.operator);
                     }
                 }
+            } else if (room?.diceRoller === DICE_ROLLER.DICE_PLUS) {
+                await dicePlusRoll(modifiedDice, label, addRoll, modifier === "SELF", props.character, props.onRoll);
             } else {
                 rollResult = await localRoll(modifiedDice, label, addRoll, modifier === "SELF", props.character);
             }
             if (props.onRoll) {
-                props.onRoll([rollResult]);
+                props.onRoll(rollResult);
             }
             button.classList.remove("rolling");
             try {
@@ -82,7 +93,7 @@ export const DiceButton = (props: DiceButtonProps) => {
             const parsed = parseRollEquation(props.dice[0].notation, "dddice-bees");
             const die = parsed.dice.find((d) => d.type !== "mod");
             if (die) {
-                if (room?.disableDiceRoller) {
+                if (room?.diceRoller !== DICE_ROLLER.DDDICE) {
                     return getSvgForDiceType(die.type);
                 } else {
                     if (theme) {
@@ -101,17 +112,17 @@ export const DiceButton = (props: DiceButtonProps) => {
     };
 
     const isEnabled = useCallback(() => {
-        return (initialized && !room?.disableDiceRoller) || room?.disableDiceRoller;
-    }, [initialized, room?.disableDiceRoller]);
+        return (initialized && room?.diceRoller === DICE_ROLLER.DDDICE) || room?.diceRoller !== DICE_ROLLER.DDDICE;
+    }, [initialized, room?.diceRoller]);
 
     return (
         <Tippy
-            content={!initialized && !room?.disableDiceRoller ? "Dice Roller is not initialized" : ""}
-            disabled={!(!initialized && !room?.disableDiceRoller)}
+            content={!initialized && room?.diceRoller === DICE_ROLLER.DDDICE ? "Dice Roller is not initialized" : ""}
+            disabled={!(!initialized && room?.diceRoller === DICE_ROLLER.DDDICE)}
         >
             <span
                 className={`button-wrapper ${props.classes} ${isEnabled() ? "enabled" : "disabled"} ${
-                    room?.disableDiceRoller ? "calculated" : "three-d-dice"
+                    room?.diceRoller === DICE_ROLLER.SIMPLE ? "calculated" : "three-d-dice"
                 }`}
                 onMouseEnter={() => {
                     setIsOpen(true);

@@ -9,8 +9,8 @@ import { DiceRoomButtons } from "./DiceRoomButtons.tsx";
 import { CopySvg } from "../../svgs/CopySvg.tsx";
 import { IUser } from "dddice-js";
 import { usePlayerContext } from "../../../context/PlayerContext.ts";
-import { updateRoomMetadata } from "../../../helper/helpers.ts";
 import { useShallow } from "zustand/react/shallow";
+import { DICE_ROLLER } from "../../../helper/types.ts";
 
 export const DiceRoom = ({ className, user }: { className?: string; user?: IUser }) => {
     const room = useMetadataContext(useShallow((state) => state.room));
@@ -33,7 +33,7 @@ export const DiceRoom = ({ className, user }: { className?: string; user?: IUser
                 <div className={`dice-tray ${open ? "open" : "closed"}`}>
                     <div className={"dice-tray-content"}>
                         <div className={"top"}>
-                            {room?.disableDiceRoller ? (
+                            {room?.diceRoller !== DICE_ROLLER.DDDICE ? (
                                 <>
                                     <button
                                         className={"clear-log"}
@@ -45,14 +45,16 @@ export const DiceRoom = ({ className, user }: { className?: string; user?: IUser
                                     </button>
 
                                     {playerContext.role === "GM" ? (
-                                        <button
+                                        // TODO switch to select other dicerollers
+                                        <></>
+                                    ) : /* <button
                                             onClick={async () => {
                                                 await updateRoomMetadata(room, { disableDiceRoller: false });
                                             }}
                                         >
                                             Enabled dddice Integration
-                                        </button>
-                                    ) : null}
+                                        </button>*/
+                                    null}
                                 </>
                             ) : (
                                 <>

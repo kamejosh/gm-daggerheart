@@ -633,7 +633,9 @@
             }
 
             .roll-equation {
-                display: flex;
+                display: block;
+                overflow: hidden;
+                text-overflow: ellipsis;
             }
         }
     }

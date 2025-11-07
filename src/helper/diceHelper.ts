@@ -1,4 +1,4 @@
-import { GMDMetadata, RoomMetadata } from "./types.ts";
+import { DICE_ROLLER, GMDMetadata, RoomMetadata } from "./types.ts";
 import { dddiceRollToRollLog, updateRoomMetadata } from "./helpers.ts";
 import OBR, { Metadata } from "@owlbear-rodeo/sdk";
 import {
@@ -17,12 +17,21 @@ import {
     ThreeDDiceRollEvent,
 } from "dddice-js";
 import { RollLogEntryType, rollLogStore } from "../context/RollLogContext.tsx";
-import { rollLogPopover, rollLogPopoverId, rollMessageChannel } from "./variables.ts";
+import { ID, rollLogPopover, rollLogPopoverId, rollMessageChannel } from "./variables.ts";
 import { DiceRoll } from "@dice-roller/rpg-dice-roller";
 import { v4 } from "uuid";
 import { diceRollerStore } from "../context/DDDiceContext.tsx";
 import { CustomDieNotation, diceButtonsStore } from "../context/DiceButtonContext.tsx";
 import { updateTokenMetadata } from "./tokenHelper.ts";
+import {
+    dicePlusErrorChannel,
+    dicePlusRequestChannel,
+    dicePlusResponseChannel,
+    DicePlusRollErrorData,
+    DicePlusRollRequestData,
+    DicePlusRollResultData,
+} from "../background/diceplus.ts";
+import { useMetadataContext } from "../context/MetadataContext.ts";
 
 let rollLogTimeOut: number;
 
@@ -433,6 +442,106 @@ export const localRoll = async (
     }
 };
 
+export const dicePlusRoll = async (
+    diceEquation: string,
+    label: string,
+    addRoll: (entry: RollLogEntryType) => void,
+    hidden: boolean = false,
+    statblock?: string,
+    onRoll?: (rollResult?: IRoll | DiceRoll | DicePlusRollResultData | null) => void,
+    isStatRoll?: boolean,
+    id?: string,
+    tokenData?: GMDMetadata,
+    modifier?: "ADV" | "DIS" | "SELF" | "REACT",
+) => {
+    const rollRequest: DicePlusRollRequestData = {
+        source: ID,
+        showResults: false,
+        rollId: crypto.randomUUID(),
+        playerName: label,
+        rollTarget: hidden ? "self" : "everyone",
+        diceNotation: diceEquation,
+        timestamp: Date.now(),
+        playerId: OBR.player.id,
+    };
+
+    const unsubscribeMessage = OBR.broadcast.onMessage(dicePlusResponseChannel, async (message) => {
+        const room = useMetadataContext.getState().room;
+        const data = message.data as DicePlusRollResultData;
+        // because we don't want to handle rolls multiple times we check if the rollId is the same
+        if (data.rollId === rollRequest.rollId) {
+            const name = await OBR.player.getName();
+            if (isStatRoll) {
+                const hope = data.result.groups.find((g) => g.diceModel === "Hope");
+                const fear = data.result.groups.find((g) => g.diceModel === "Fear");
+                if (hope && fear) {
+                    if (hope.total > fear.total) {
+                        label += ": Hope";
+                        if (modifier !== "REACT" && tokenData && id) {
+                            await updateTokenMetadata({ ...tokenData, hope: Math.min(tokenData.hope + 1, 6) }, [id]);
+                        }
+                    } else if (hope.total < fear.total) {
+                        label += ": Fear";
+                        if (modifier !== "REACT") {
+                            await updateRoomMetadata(room, { fear: room?.fear ? Math.min(room?.fear + 1, 12) : 1 });
+                        }
+                    } else {
+                        label += ": Critical";
+                        if (modifier !== "REACT" && tokenData && id) {
+                            await updateTokenMetadata(
+                                {
+                                    ...tokenData,
+                                    hope: Math.min(tokenData.hope + 1, 6),
+                                    stress: { ...tokenData.stress, current: Math.max(tokenData.stress.current - 1, 0) },
+                                },
+                                [id],
+                            );
+                        }
+                    }
+                }
+            }
+            const logEntry = {
+                uuid: rollRequest.rollId,
+                created_at: new Date().toISOString(),
+                equation: diceEquation,
+                label: label,
+                is_hidden: false,
+                total_value: String(data.result.totalValue),
+                username: statblock ?? name,
+                values: [data.result.rollSummary],
+                owlbear_user_id: OBR.player.id,
+                participantUsername: name,
+            };
+
+            if (!hidden) {
+                await OBR.broadcast.sendMessage(rollMessageChannel, logEntry, { destination: "REMOTE" });
+            }
+
+            if (onRoll) {
+                onRoll(data);
+            }
+
+            await handleNewRoll(addRoll, logEntry);
+            rollLogStore.persist.rehydrate();
+
+            unsubscribeMessage();
+            unsubscribeError();
+        }
+    });
+
+    const unsubscribeError = OBR.broadcast.onMessage(dicePlusErrorChannel, async (message) => {
+        const data = message.data as DicePlusRollErrorData;
+        // because we don't want to handle rolls multiple times we check if the rollId is the same
+        if (data.rollId === rollRequest.rollId) {
+            console.warn(`${data.error} for: ${data.notation}`);
+            unsubscribeMessage();
+            unsubscribeError();
+        }
+    });
+
+    await OBR.broadcast.sendMessage(dicePlusRequestChannel, rollRequest, { destination: "ALL" });
+};
+
 export const rollWrapper = async (
     api: ThreeDDiceAPI | null,
     dice: Array<IDiceRoll>,
@@ -491,7 +600,7 @@ export const rollDualityDice = async (
         operator: Operator | undefined;
     }> = [];
 
-    if (!room?.disableDiceRoller && rollerApi) {
+    if (room?.diceRoller === DICE_ROLLER.DDDICE && rollerApi) {
         parsedDice.push(parseRollEquation("1d12", hopeTheme ? hopeTheme.id : theme?.id || "dddice-bees"));
         parsedDice.push(parseRollEquation("1d12", fearTheme ? fearTheme.id : theme?.id || "dddice-bees"));
 
@@ -552,6 +661,28 @@ export const rollDualityDice = async (
                 console.warn("error in dice roll", parsed.dice, parsed.operator);
             }
         }
+    } else if (room?.diceRoller === DICE_ROLLER.DICE_PLUS) {
+        let notation = "1d12{Hope} + 1d12{Fear}";
+        if (modifier === "ADV") {
+            notation += "+1d6";
+        } else if (modifier === "DIS") {
+            notation += "-1d6";
+        }
+        if (value !== 0) {
+            notation += `+ ${value}`;
+        }
+        await dicePlusRoll(
+            notation,
+            label,
+            addRoll,
+            modifier === "SELF",
+            external_id,
+            undefined,
+            true,
+            id,
+            data,
+            modifier,
+        );
     } else {
         let notation = "2d12";
         if (modifier === "ADV") {

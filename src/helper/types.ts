@@ -1,3 +1,9 @@
+export enum DICE_ROLLER {
+    DDDICE,
+    SIMPLE,
+    DICE_PLUS,
+}
+
 export type WeaponType = {
     label: string;
     dice: string;
@@ -64,7 +70,7 @@ export type RoomMetadata = {
     fear?: number;
     diceRoom?: { slug: string | undefined };
     diceUser?: Array<DiceUser>;
-    disableDiceRoller?: boolean;
+    diceRoller?: DICE_ROLLER;
 };
 
 export type ItemChanges = {

@@ -1,10 +1,11 @@
 import OBR, { Metadata } from "@owlbear-rodeo/sdk";
 import { diceTrayModal, diceTrayModalId, metadataKey, rollMessageChannel } from "../helper/variables.ts";
-import { DiceUser, RoomMetadata } from "../helper/types.ts";
+import { DICE_ROLLER, DiceUser, RoomMetadata } from "../helper/types.ts";
 import { getRoomDiceUser } from "../helper/helpers.ts";
 import { AsyncLock } from "../helper/AsyncLock.ts";
-import { IRoll, ThreeDDiceAPI } from "dddice-js";
+import { ThreeDDiceAPI } from "dddice-js";
 import {
+    addRollerApiCallbacks,
     blastMessage,
     connectToDddiceRoom,
     dddiceApiLogin,
@@ -16,9 +17,9 @@ import { RollLogEntryType, rollLogStore } from "../context/RollLogContext.tsx";
 import { diceRollerStore } from "../context/DDDiceContext.tsx";
 
 const lock = new AsyncLock();
-const diceRollerState: { diceUser: DiceUser | null; disableDiceRoller: boolean; diceRoom?: string } = {
+const diceRollerState: { diceUser: DiceUser | null; diceRoller: DICE_ROLLER; diceRoom?: string } = {
     diceUser: null,
-    disableDiceRoller: false,
+    diceRoller: DICE_ROLLER.DDDICE,
 };
 
 const initDice = async (room: RoomMetadata, updateApi: boolean) => {
@@ -46,14 +47,14 @@ const initDice = async (room: RoomMetadata, updateApi: boolean) => {
         }
     } else {
         if (api && !diceRollerStore.getState().dddiceExtensionLoaded) {
-            // await addRollerApiCallbacks(api, rollLogStore.getState().addRoll);
+            await addRollerApiCallbacks(api, rollLogStore.getState().addRoll);
         }
         await OBR.modal.close(diceTrayModalId);
     }
 };
 
 const initDiceRoller = async (room: RoomMetadata, updateApi: boolean) => {
-    if (!room?.disableDiceRoller) {
+    if (room?.diceRoller === DICE_ROLLER.DDDICE) {
         await initDice(room, updateApi);
     } else {
         await OBR.modal.close(diceTrayModalId);
@@ -64,14 +65,15 @@ const roomCallback = async (metadata: Metadata, forceLogin: boolean) => {
     await lock.promise;
     lock.enable();
     const roomData = metadataKey in metadata ? (metadata[metadataKey] as RoomMetadata) : null;
+    const dddiceInUse = roomData?.diceRoller === DICE_ROLLER.DDDICE;
     let initialized: boolean = false;
-    let reInitialize: boolean = diceRollerState.disableDiceRoller !== roomData?.disableDiceRoller;
+    let reInitialize: boolean = diceRollerState.diceRoller !== roomData?.diceRoller;
     reInitialize =
         reInitialize ||
         diceRollerState.diceUser?.diceRendering !== getRoomDiceUser(roomData, OBR.player.id)?.diceRendering;
-    diceRollerState.disableDiceRoller = roomData?.disableDiceRoller === undefined ? false : roomData.disableDiceRoller;
+    diceRollerState.diceRoller = roomData?.diceRoller === undefined ? DICE_ROLLER.DDDICE : roomData.diceRoller;
 
-    if (roomData && (!roomData.disableDiceRoller || reInitialize)) {
+    if (roomData && (dddiceInUse || reInitialize)) {
         const newDiceUser = getRoomDiceUser(roomData, OBR.player.id);
         if (newDiceUser) {
             const newApiKey = newDiceUser.apiKey;
@@ -121,7 +123,6 @@ export const setupDddice = async () => {
         try {
             if (event.type === "message") {
                 if (event.data.type === "roll:finished") {
-                    event.data.roll.label = updateRollLabel(event.data.roll);
                     await rollerCallback(event.data.roll, rollLogStore.getState().addRoll);
                 }
                 if (event.data.type === "dddice.loaded") {
@@ -131,23 +132,8 @@ export const setupDddice = async () => {
             }
         } catch {}
     });
-    blastMessage({ type: "dddice.isLoaded" });
-    console.info("GM's Daggerheart - Finished setting up dddice");
-};
-
-const updateRollLabel = (roll: IRoll): string => {
-    const dualities = ["Roll Duality", "Agility", "Strength", "Finesse", "Instinct", "Presence", "Knowledge", "Attack"];
-    if (roll.label && dualities.includes(roll.label)) {
-        if (roll.values[0].value > roll.values[1].value) {
-            roll.label += ": Hope";
-        } else if (roll.values[0].value < roll.values[1].value) {
-            roll.label += ": Fear";
-        } else {
-            roll.label += ": Critical";
-        }
-        return roll.label;
-    } else if (roll.label) {
-        return roll.label;
+    if (metadataKey in metadata && (metadata[metadataKey] as RoomMetadata).diceRoller === DICE_ROLLER.DDDICE) {
+        blastMessage({ type: "dddice.isLoaded" });
+        console.info("GM's Grimoire - Finished setting up dddice");
     }
-    return "";
 };

@@ -1,4 +1,4 @@
-import { GMDMetadata } from "../../../helper/types.ts";
+import { DICE_ROLLER, GMDMetadata } from "../../../helper/types.ts";
 import { useDiceRoller } from "../../../context/DDDiceContext.tsx";
 import { useShallow } from "zustand/react/shallow";
 import { Image } from "@owlbear-rodeo/sdk";
@@ -50,8 +50,12 @@ export const Stat = ({
     }, [edit]);
 
     const isEnabled = useMemo(() => {
-        return component === "popover" || (initialized && !room?.disableDiceRoller) || room?.disableDiceRoller;
-    }, [initialized, room?.disableDiceRoller]);
+        return (
+            component === "popover" ||
+            (initialized && room?.diceRoller === DICE_ROLLER.DDDICE) ||
+            room?.diceRoller !== DICE_ROLLER.DDDICE
+        );
+    }, [initialized, room?.diceRoller]);
 
     const { refs, floatingStyles, context } = useFloating({
         open: isOpen,
