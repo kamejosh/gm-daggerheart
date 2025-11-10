@@ -1,3 +1,13 @@
+# 1.1.0
+
+- Add Dice+ Support
+  - if you like to use the Dice+ extension, enable the extension and then chose it as your diceroller in the settings,
+  - If you create a D12 called Hope and a D12 called Fear the duality rolls will automatically use these dice.
+- Fix visibility behavior when hiding and unhiding a token
+- Add setting to switch HP to Daggerheart defaults (HP are counted upwards and marked as expended). 
+  - Stress and threshold buttons increase the HP value instead of decreasing it in this mode.
+  - The HP Bar is disabled in this mode.
+
 # 1.0.2
 
 - Fix error that roll label don't show up for others
