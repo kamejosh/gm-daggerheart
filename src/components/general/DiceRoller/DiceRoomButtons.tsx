@@ -148,7 +148,11 @@ const CustomDiceButton = (props: CustomDiceButtonProps) => {
                 });
             }
         } else if (props.customDice) {
-            await localRoll(props.customDice.dice, "Custom Roll", addRoll, hide);
+            if (room?.diceRoller === DICE_ROLLER.DICE_PLUS) {
+                await dicePlusRoll(props.customDice.dice, "Custom Roll", addRoll, hide);
+            } else {
+                await localRoll(props.customDice.dice, "Custom Roll", addRoll, hide);
+            }
         }
         button.classList.remove("rolling");
         button.blur();
@@ -346,6 +350,8 @@ const QuickButtons = ({ open }: { open: boolean }) => {
                     whisper: hide ? await getUserUuid(room, rollerApi) : undefined,
                 });
             }
+        } else if (room?.diceRoller === DICE_ROLLER.DICE_PLUS) {
+            await dicePlusRoll(dice, "Roll: Custom", addRoll, hide);
         } else {
             await localRoll(dice, "Roll: Custom", addRoll, hide);
         }

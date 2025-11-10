@@ -44,6 +44,7 @@ const initRoom = async () => {
         const roomData: RoomMetadata = {
             ignoreUpdateNotification: false,
             diceRoller: DICE_ROLLER.DDDICE,
+            countUp: false,
             fear: 0,
         };
         ownMetadata[metadataKey] = roomData;
@@ -55,6 +56,9 @@ const initRoom = async () => {
                 roomData.diceRoller = DICE_ROLLER.SIMPLE;
             }
             roomData.diceRoller = DICE_ROLLER.DDDICE;
+        }
+        if (isUndefined(roomData.countUp)) {
+            roomData.countUp = false;
         }
     }
     await OBR.room.setMetadata(ownMetadata);

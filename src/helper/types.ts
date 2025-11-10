@@ -68,6 +68,7 @@ export type DiceUser = {
 export type RoomMetadata = {
     ignoreUpdateNotification?: boolean;
     fear?: number;
+    countUp?: boolean;
     diceRoom?: { slug: string | undefined };
     diceUser?: Array<DiceUser>;
     diceRoller?: DICE_ROLLER;

@@ -3,8 +3,10 @@ import { GMDMetadata, ItemChanges } from "./types.ts";
 import { deleteAttachments, getAttachedItems, getImageBounds } from "./helpers.ts";
 import { infoMetadataKey, itemMetadataKey } from "./variables.ts";
 import { addItems, updateItems } from "./obrHelper.ts";
+import { useMetadataContext } from "../context/MetadataContext.ts";
 
 export const createAttachments = async (percentage: number, text: string, token: Image, data: GMDMetadata) => {
+    const countUp = useMetadataContext.getState().room?.countUp;
     const bounds = await getImageBounds(token);
     const overflow = 100;
     const height = Math.abs(Math.ceil(bounds.height / 4.85));
@@ -14,43 +16,6 @@ export const createAttachments = async (percentage: number, text: string, token:
         y: bounds.position.y + bounds.height - height - bounds.height / 10,
     };
     const border = Math.floor(width / 75);
-
-    const backgroundShape = buildShape()
-        .width(width)
-        .height(height)
-        .shapeType("RECTANGLE")
-        .fillColor("black")
-        .fillOpacity(0.5)
-        .strokeColor("black")
-        .strokeOpacity(0)
-        .position(position)
-        .attachedTo(token.id)
-        .layer(token.layer)
-        .locked(true)
-        .disableHit(true)
-        .disableAttachmentBehavior(["ROTATION"])
-        .visible(token.visible && data.isPlayer)
-        .zIndex(token.zIndex + 1)
-        .build();
-
-    const hpShape = buildShape()
-        .width(percentage === 0 ? 0 : (width - border * 2) * percentage)
-        .height(height - border * 2)
-        .shapeType("RECTANGLE")
-        .fillColor("red")
-        .fillOpacity(0.5)
-        .strokeWidth(0)
-        .strokeOpacity(0)
-        .position({ x: position.x + border, y: position.y + border })
-        .attachedTo(token.id)
-        .layer(token.layer)
-        .locked(true)
-        .disableHit(true)
-        .name("hp")
-        .disableAttachmentBehavior(["ROTATION"])
-        .visible(token.visible && data.isPlayer)
-        .zIndex(token.zIndex + 2)
-        .build();
 
     const textItem = buildText()
         .textType("PLAIN")
@@ -290,8 +255,6 @@ export const createAttachments = async (percentage: number, text: string, token:
         .zIndex(token.zIndex + 4)
         .build();
 
-    backgroundShape.metadata[infoMetadataKey] = { isHpText: true, attachmentType: "BAR" };
-    hpShape.metadata[infoMetadataKey] = { isHpText: true, attachmentType: "BAR" };
     textItem.metadata[infoMetadataKey] = { isHpText: true, attachmentType: "HP" };
     hopeItem.metadata[infoMetadataKey] = { isHpText: true, attachmentType: "HOPE" };
     hopeText.metadata[infoMetadataKey] = { isHpText: true, attachmentType: "HOPE" };
@@ -301,23 +264,57 @@ export const createAttachments = async (percentage: number, text: string, token:
     evasionText.metadata[infoMetadataKey] = { isHpText: true, attachmentType: "EVASION" };
     armorItem.metadata[infoMetadataKey] = { isHpText: true, attachmentType: "ARMOR" };
     armorText.metadata[infoMetadataKey] = { isHpText: true, attachmentType: "ARMOR" };
+
+    let items = [];
     if (data.isPlayer) {
-        return [
-            backgroundShape,
-            hpShape,
-            textItem,
-            hopeItem,
-            hopeText,
-            stressItem,
-            stressText,
-            evasionItem,
-            evasionText,
-            armorItem,
-            armorText,
-        ];
+        items = [textItem, hopeItem, hopeText, stressItem, stressText, evasionItem, evasionText, armorItem, armorText];
     } else {
-        return [backgroundShape, hpShape, textItem, stressItem, stressText, evasionItem, evasionText];
+        items = [textItem, stressItem, stressText, evasionItem, evasionText];
     }
+
+    if (!countUp) {
+        const backgroundShape = buildShape()
+            .width(width)
+            .height(height)
+            .shapeType("RECTANGLE")
+            .fillColor("black")
+            .fillOpacity(0.5)
+            .strokeColor("black")
+            .strokeOpacity(0)
+            .position(position)
+            .attachedTo(token.id)
+            .layer(token.layer)
+            .locked(true)
+            .disableHit(true)
+            .disableAttachmentBehavior(["ROTATION"])
+            .visible(token.visible && data.isPlayer)
+            .zIndex(token.zIndex + 1)
+            .build();
+
+        const hpShape = buildShape()
+            .width(percentage === 0 ? 0 : (width - border * 2) * percentage)
+            .height(height - border * 2)
+            .shapeType("RECTANGLE")
+            .fillColor("red")
+            .fillOpacity(0.5)
+            .strokeWidth(0)
+            .strokeOpacity(0)
+            .position({ x: position.x + border, y: position.y + border })
+            .attachedTo(token.id)
+            .layer(token.layer)
+            .locked(true)
+            .disableHit(true)
+            .name("hp")
+            .disableAttachmentBehavior(["ROTATION"])
+            .visible(token.visible && data.isPlayer)
+            .zIndex(token.zIndex + 2)
+            .build();
+        backgroundShape.metadata[infoMetadataKey] = { isHpText: true, attachmentType: "BAR" };
+        hpShape.metadata[infoMetadataKey] = { isHpText: true, attachmentType: "BAR" };
+
+        items.push(backgroundShape, hpShape);
+    }
+    return items;
 };
 
 export const calculatePercentage = (current: number, max: number) => {

@@ -212,6 +212,7 @@ export const prepareRoomUser = async (diceRoom: IRoom, rollerApi: ThreeDDiceAPI,
 
 export const handleNewRoll = async (addRoll: (entry: RollLogEntryType) => void, rollLogEntry: RollLogEntryType) => {
     addRoll(rollLogEntry);
+    console.log(rollLogEntry);
 
     await OBR.popover.open(rollLogPopover);
 
@@ -468,12 +469,15 @@ export const dicePlusRoll = async (
     const unsubscribeMessage = OBR.broadcast.onMessage(dicePlusResponseChannel, async (message) => {
         const room = useMetadataContext.getState().room;
         const data = message.data as DicePlusRollResultData;
+        console.log(data, data.rollId, rollRequest.rollId, data.rollId === rollRequest.rollId);
         // because we don't want to handle rolls multiple times we check if the rollId is the same
         if (data.rollId === rollRequest.rollId) {
             const name = await OBR.player.getName();
+            console.log(isStatRoll);
             if (isStatRoll) {
                 const hope = data.result.groups.find((g) => g.diceModel === "Hope");
                 const fear = data.result.groups.find((g) => g.diceModel === "Fear");
+                console.log(hope, fear);
                 if (hope && fear) {
                     if (hope.total > fear.total) {
                         label += ": Hope";

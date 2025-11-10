@@ -6,6 +6,7 @@ import { updateTokenMetadata } from "../../../helper/tokenHelper.ts";
 import Tippy from "@tippyjs/react";
 import { useState } from "react";
 import { toNumber } from "lodash";
+import { useMetadataContext } from "../../../context/MetadataContext.ts";
 
 const ConnectionArrow = ({ threshold, id }: { threshold: number; id: string }) => {
     const token = useTokenListContext(useShallow((state) => state.tokens?.get(id)));
@@ -45,6 +46,7 @@ const ConnectionArrow = ({ threshold, id }: { threshold: number; id: string }) =
 };
 
 export const Thresholds = ({ id }: { id: string }) => {
+    const countUp = useMetadataContext.getState().room?.countUp;
     const token = useTokenListContext(useShallow((state) => state.tokens?.get(id)));
     const data = token?.data as GMDMetadata;
 
@@ -53,7 +55,12 @@ export const Thresholds = ({ id }: { id: string }) => {
             <div className={styles.damageThresholds}>
                 <span
                     onClick={async () => {
-                        const hp = Math.max(data.hp.current - 1, 0);
+                        let hp = data.hp.current;
+                        if (countUp) {
+                            hp = Math.min(hp + 1, data.hp.max);
+                        } else {
+                            hp = Math.max(hp - 1, 0);
+                        }
                         await updateTokenMetadata({ ...data, hp: { ...data.hp, current: hp } }, [id]);
                     }}
                 >
@@ -62,7 +69,12 @@ export const Thresholds = ({ id }: { id: string }) => {
                 <ConnectionArrow threshold={data.thresholds.major} id={id} />
                 <span
                     onClick={async () => {
-                        const hp = Math.max(data.hp.current - 2, 0);
+                        let hp = data.hp.current;
+                        if (countUp) {
+                            hp = Math.min(hp + 2, data.hp.max);
+                        } else {
+                            hp = Math.max(hp - 2, 0);
+                        }
                         await updateTokenMetadata({ ...data, hp: { ...data.hp, current: hp } }, [id]);
                     }}
                 >
@@ -71,7 +83,12 @@ export const Thresholds = ({ id }: { id: string }) => {
                 <ConnectionArrow threshold={data.thresholds.sever} id={id} />
                 <span
                     onClick={async () => {
-                        const hp = Math.max(data.hp.current - 3, 0);
+                        let hp = data.hp.current;
+                        if (countUp) {
+                            hp = Math.min(hp + 3, data.hp.max);
+                        } else {
+                            hp = Math.max(hp - 3, 0);
+                        }
                         await updateTokenMetadata({ ...data, hp: { ...data.hp, current: hp } }, [id]);
                     }}
                 >

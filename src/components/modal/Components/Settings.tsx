@@ -83,6 +83,16 @@ export const Settings = () => {
                             </div>
                         ) : null}
                     </div>
+                    <div className={"count-down setting"}>
+                        Count HP from 0 to max (disables HP Bar):
+                        <input
+                            type={"checkbox"}
+                            checked={room?.countUp || false}
+                            onChange={() => {
+                                updateRoomMetadata(room, { countUp: !room?.countUp });
+                            }}
+                        />
+                    </div>
                     <div className={"update-notification setting"}>
                         Don't show Changelog on updates:
                         <input

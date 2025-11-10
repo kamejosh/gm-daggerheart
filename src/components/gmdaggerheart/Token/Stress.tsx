@@ -8,8 +8,10 @@ import Tippy from "@tippyjs/react";
 import { useShallow } from "zustand/react/shallow";
 import { StressSvg } from "../../svgs/StressSvg.tsx";
 import { toNumber } from "lodash";
+import { useMetadataContext } from "../../../context/MetadataContext.ts";
 
 export const Stress = ({ id, hasOwnership }: { id: string; hasOwnership: boolean }) => {
+    const countUp = useMetadataContext.getState().room?.countUp;
     const stressRef = useRef<HTMLInputElement>(null);
     const maxStressRef = useRef<HTMLInputElement>(null);
     const token = useTokenListContext(useShallow((state) => state.tokens?.get(id)));
@@ -39,10 +41,15 @@ export const Stress = ({ id, hasOwnership }: { id: string; hasOwnership: boolean
                     <StressSvg
                         onClick={async () => {
                             if (hasOwnership) {
-                                const hp =
-                                    data.stress.current === data.stress.max
-                                        ? Math.max(data.hp.current - 1, 0)
-                                        : data.hp.current;
+                                let hp = data.hp.current;
+                                if (data.stress.current === data.stress.max) {
+                                    if (countUp) {
+                                        hp = Math.min(hp + 1, data.hp.max);
+                                    } else {
+                                        hp = Math.max(hp - 1, 0);
+                                    }
+                                }
+
                                 const stress = Math.min(data.stress.current + 1, data.stress.max);
                                 await updateTokenMetadata(
                                     {
