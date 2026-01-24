@@ -2,7 +2,7 @@ import { useTokenListContext } from "../../../context/TokenContext.tsx";
 import { useShallow } from "zustand/react/shallow";
 import { WeaponType, GMDMetadata } from "../../../helper/types.ts";
 import { Image } from "@owlbear-rodeo/sdk";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { EditSvg } from "../../svgs/EditSvg.tsx";
 import { getTokenName } from "../../../helper/helpers.ts";
 import { DiceButton } from "../../general/DiceRoller/DiceButtonWrapper.tsx";
@@ -11,6 +11,7 @@ import { AddSvg } from "../../svgs/AddSvg.tsx";
 import { updateTokenMetadata } from "../../../helper/tokenHelper.ts";
 import { DeleteSvg } from "../../svgs/DeleteSvg.tsx";
 import { parseRollEquation } from "dddice-js";
+import { useDebounce } from "ahooks";
 
 const WeaponEntry = ({ weapon, id, edit, index }: { weapon: WeaponType; id: string; edit: boolean; index: number }) => {
     const token = useTokenListContext(useShallow((state) => state.tokens?.get(id)));
@@ -20,6 +21,32 @@ const WeaponEntry = ({ weapon, id, edit, index }: { weapon: WeaponType; id: stri
     const [diceInput, setDiceInput] = useState<string>(weapon.dice);
     const [damageType, setDamageType] = useState<string | undefined>(weapon.damageType);
     const [error, setError] = useState<boolean>(false);
+    const debouncedDamageType = useDebounce(damageType, { wait: 300 });
+    const debouncedLabel = useDebounce(labelInput, { wait: 300 });
+    const debouncedDiceInput = useDebounce(diceInput, { wait: 300 });
+
+    useEffect(() => {
+        const update = async () => {
+            let newWeapon: WeaponType | null = null;
+            let dice: string | null = debouncedDiceInput;
+            try {
+                parseRollEquation(dice, "dddice-bees");
+            } catch {
+                dice = null;
+            }
+            const weaponsUpdate = [...data.weapons];
+            if (dice) {
+                newWeapon = { ...weaponsUpdate[index], label: labelInput, dice: diceInput, damageType: damageType };
+            } else {
+                newWeapon = { ...weaponsUpdate[index], label: labelInput, damageType: damageType };
+            }
+            if (newWeapon) {
+                weaponsUpdate.splice(index, 1, newWeapon);
+                await updateTokenMetadata({ ...data, weapons: weaponsUpdate }, [id]);
+            }
+        };
+        void update();
+    }, [debouncedDamageType, debouncedLabel, debouncedDiceInput]);
 
     const label = `${weapon.label}${weapon.damageType ? ` (${weapon.damageType})` : ""}`;
 

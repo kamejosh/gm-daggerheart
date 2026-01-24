@@ -1,3 +1,7 @@
+# Unvesioned
+
+- Fix Issue where weapon stats would not be saved correctly
+
 # 1.1.0
 
 - Add Dice+ Support
