@@ -15,6 +15,9 @@ export const StressSvg = ({
     onClick?: () => void;
     onContextMenu?: (e: React.MouseEvent<SVGElement>) => void;
 }) => {
+    if (!isFinite(percent)) {
+        percent = 100;
+    }
     return (
         <svg
             onClick={onClick}

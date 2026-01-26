@@ -27,26 +27,36 @@ const WeaponEntry = ({ weapon, id, edit, index }: { weapon: WeaponType; id: stri
 
     useEffect(() => {
         const update = async () => {
-            let newWeapon: WeaponType | null = null;
-            let dice: string | null = debouncedDiceInput;
-            try {
-                parseRollEquation(dice, "dddice-bees");
-            } catch {
-                dice = null;
-            }
             const weaponsUpdate = [...data.weapons];
-            if (dice) {
-                newWeapon = { ...weaponsUpdate[index], label: labelInput, dice: diceInput, damageType: damageType };
-            } else {
-                newWeapon = { ...weaponsUpdate[index], label: labelInput, damageType: damageType };
-            }
-            if (newWeapon) {
-                weaponsUpdate.splice(index, 1, newWeapon);
-                await updateTokenMetadata({ ...data, weapons: weaponsUpdate }, [id]);
-            }
+            const newWeapon = { ...weaponsUpdate[index], damageType: damageType };
+            weaponsUpdate.splice(index, 1, newWeapon);
+            await updateTokenMetadata({ ...data, weapons: weaponsUpdate }, [id]);
         };
         void update();
-    }, [debouncedDamageType, debouncedLabel, debouncedDiceInput]);
+    }, [debouncedDamageType]);
+
+    useEffect(() => {
+        const update = async () => {
+            const weaponsUpdate = [...data.weapons];
+            const newWeapon = { ...weaponsUpdate[index], label: debouncedLabel };
+            weaponsUpdate.splice(index, 1, newWeapon);
+            await updateTokenMetadata({ ...data, weapons: weaponsUpdate }, [id]);
+        };
+        void update();
+    }, [debouncedLabel]);
+
+    useEffect(() => {
+        const update = async () => {
+            try {
+                parseRollEquation(diceInput, "dddice-bees");
+                const weaponsUpdate = [...data.weapons];
+                const newWeapon = { ...weaponsUpdate[index], dice: diceInput };
+                weaponsUpdate.splice(index, 1, newWeapon);
+                await updateTokenMetadata({ ...data, weapons: weaponsUpdate }, [id]);
+            } catch {}
+        };
+        void update();
+    }, [debouncedDiceInput]);
 
     const label = `${weapon.label}${weapon.damageType ? ` (${weapon.damageType})` : ""}`;
 
@@ -60,12 +70,6 @@ const WeaponEntry = ({ weapon, id, edit, index }: { weapon: WeaponType; id: stri
                     value={labelInput}
                     onChange={(e) => {
                         setLabelInput(e.target.value);
-                    }}
-                    onBlur={async () => {
-                        const weaponsUpdate = [...data.weapons];
-                        const newWeapon = { ...weaponsUpdate[index], label: labelInput };
-                        weaponsUpdate.splice(index, 1, newWeapon);
-                        await updateTokenMetadata({ ...data, weapons: weaponsUpdate }, [id]);
                     }}
                 />
                 <input
@@ -82,15 +86,6 @@ const WeaponEntry = ({ weapon, id, edit, index }: { weapon: WeaponType; id: stri
                             setError(true);
                         }
                     }}
-                    onBlur={async () => {
-                        try {
-                            parseRollEquation(diceInput, "dddice-bees");
-                            const weaponsUpdate = [...data.weapons];
-                            const newWeapon = { ...weaponsUpdate[index], dice: diceInput };
-                            weaponsUpdate.splice(index, 1, newWeapon);
-                            await updateTokenMetadata({ ...data, weapons: weaponsUpdate }, [id]);
-                        } catch {}
-                    }}
                 />
                 <input
                     className={styles.input}
@@ -99,12 +94,6 @@ const WeaponEntry = ({ weapon, id, edit, index }: { weapon: WeaponType; id: stri
                     value={damageType ? damageType : ""}
                     onChange={(e) => {
                         setDamageType(e.target.value);
-                    }}
-                    onBlur={async () => {
-                        const weaponsUpdate = [...data.weapons];
-                        const newWeapon = { ...weaponsUpdate[index], damageType: damageType };
-                        weaponsUpdate.splice(index, 1, newWeapon);
-                        await updateTokenMetadata({ ...data, weapons: weaponsUpdate }, [id]);
                     }}
                 />
                 <button
@@ -146,7 +135,7 @@ const AddWeapon = ({ id }: { id: string }) => {
             className={styles.add}
             onClick={async () => {
                 const weaponsUpdate = weapons ? [...weapons] : [];
-                weaponsUpdate.push({ label: "", dice: "" });
+                weaponsUpdate.push({ label: "", dice: "", damageType: "" });
                 await updateTokenMetadata({ ...data, weapons: weaponsUpdate }, [id]);
             }}
         >
