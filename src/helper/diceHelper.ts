@@ -212,7 +212,6 @@ export const prepareRoomUser = async (diceRoom: IRoom, rollerApi: ThreeDDiceAPI,
 
 export const handleNewRoll = async (addRoll: (entry: RollLogEntryType) => void, rollLogEntry: RollLogEntryType) => {
     addRoll(rollLogEntry);
-    console.log(rollLogEntry);
 
     await OBR.popover.open(rollLogPopover);
 
