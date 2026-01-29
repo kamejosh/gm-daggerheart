@@ -603,6 +603,10 @@ export const rollDualityDice = async (
         operator: Operator | undefined;
     }> = [];
 
+    if (modifier === "REACT") {
+        label = `${label} (R)`;
+    }
+
     if (room?.diceRoller === DICE_ROLLER.DDDICE && rollerApi) {
         parsedDice.push(parseRollEquation("1d12", hopeTheme ? hopeTheme.id : theme?.id || "dddice-bees"));
         parsedDice.push(parseRollEquation("1d12", fearTheme ? fearTheme.id : theme?.id || "dddice-bees"));
